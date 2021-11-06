@@ -30,7 +30,6 @@ void update_row_red(const std::vector<int>& source, std::vector<int>& target)
 
 void load_possible_moves(const std::vector<std::pair<int, char>>& cross_cars, int cars_amount, std::vector<std::vector<int>>& shift, std::vector<int>& move_possible, bool go_left)
 {
-    // TODO: come from right when right
     int start = go_left ? 0 : cross_cars.size() - 1;
     int end   = go_left ? cross_cars.size() : -1;
     for(int c = start; c != end; go_left ? ++c : --c) {
@@ -74,9 +73,6 @@ void load_possible_moves(const std::vector<std::pair<int, char>>& cross_cars, in
                 // only half movement required
                 update_row_red(shift[next_but_one], shift[first]);
                 update_row_red(shift[next_but_one], shift[second]);
-                print_shifts(move_possible, shift, cars_amount, 'A');
-                std::cout << next_but_one << " " << first << std::endl;
-                std::cout << std::endl;
             }
             else {
                 // full movement required
@@ -116,7 +112,7 @@ void load_possible_moves(const std::vector<std::pair<int, char>>& cross_cars, in
 }
 
 // when is_first -> car has to be moved twice
-// reuturn true when can be moved in that direction
+// return true when can be moved in that direction
 bool get_required_shifts(int moves_possible, std::vector<int>& shift, bool is_first, std::vector<int>& shift_req)
 {
     // can be moved once and only have to move once <- i is second part of cross car
@@ -206,28 +202,36 @@ int main()
     load_possible_moves(cross_cars, cars_amount, left_shift, move_left_possible, true);
     load_possible_moves(cross_cars, cars_amount, right_shift, move_right_possible, false);
 
-    std::cout << std::endl;
-    std::cout << "left:" << std::endl;
-    print_shifts(move_left_possible, left_shift, cars_amount, first_car);
-    std::cout << std::endl;
-    std::cout << "right:" << std::endl;
-    print_shifts(move_right_possible, right_shift, cars_amount, first_car);
+    // std::cout << std::endl;
+    // std::cout << "left:" << std::endl;
+    // print_shifts(move_left_possible, left_shift, cars_amount, first_car);
+    // std::cout << std::endl;
+    // std::cout << "right:" << std::endl;
+    // print_shifts(move_right_possible, right_shift, cars_amount, first_car);
 
     // use produced tables
-    std::cout
-        << std::endl;
     for(int i = 0; i < cars_amount; ++i) {
         // move left
         std::vector<int> left_shift_req(cars_amount);
         bool             left_ok = get_required_shifts(move_left_possible[i], left_shift[i], cross_car_lookup[i].second, left_shift_req);
         // move right
         std::vector<int> right_shift_req(cars_amount);
-        bool             right_ok = get_required_shifts(move_left_possible[i], right_shift[i], !cross_car_lookup[i].second, right_shift_req);
+        bool             right_ok = get_required_shifts(move_right_possible[i], right_shift[i], !cross_car_lookup[i].second, right_shift_req);
+
+        // std::cout << std::endl;
+        // for(auto e: left_shift_req) {
+        //     std::cout << e << " ";
+        // }
+        // std::cout << std::endl;
+        // for(auto e: right_shift_req) {
+        //     std::cout << e << " ";
+        // }
+        // std::cout << std::endl;
 
         std::cout << static_cast<char>(first_car + i) << ": ";
         // select better move
-        if(left_ok && better_shift(left_shift_req, right_shift_req)) {
-            std::cout << "goleft ";
+        // either left is better than right or right is impossible
+        if(left_ok && (better_shift(left_shift_req, right_shift_req) || !right_ok)) {
             for(int x = 0; x < left_shift_req.size(); ++x)
                 if(left_shift_req[x]) {
                     std::cout << cross_car_lookup[x].first << " " << left_shift_req[x] << " links, ";
@@ -236,7 +240,6 @@ int main()
                 }
         }
         else if(right_ok) {
-            std::cout << "goleft ";
             // go the other way around <- now moving right
             for(int x = right_shift_req.size() - 1; x; --x)
                 if(right_shift_req[x]) {
@@ -245,7 +248,7 @@ int main()
                 }
         }
         else
-            std::cout << "unmoeglich" << std::endl;
+            std::cout << "unmoeglich";
         std::cout << std::endl;
     }
 }
