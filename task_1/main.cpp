@@ -2,6 +2,17 @@
 #include <iostream>
 #include <vector>
 
+void print_shifts(const std::vector<int>& move_possible, const std::vector<std::vector<int>>& shift, int cars_amount, char first_car)
+{
+    for(int i = 0; i < cars_amount; ++i) {
+        std::cout << static_cast<char>(first_car + i) << "\t" << move_possible[i] << ":\t";
+        for(int y = 0; y < cars_amount; ++y) {
+            std::cout << shift[i][y] << " ";
+        }
+        std::cout << std::endl;
+    }
+}
+
 // merge source into target
 void update_row_dir(const std::vector<int>& source, std::vector<int>& target)
 {
@@ -17,24 +28,28 @@ void update_row_red(const std::vector<int>& source, std::vector<int>& target)
     }
 }
 
-void load_possible_moves(const std::vector<std::pair<int, char>>& q_cars, int cars_amount, std::vector<std::vector<int>>& shift, std::vector<int>& move_possible, bool go_left)
+void load_possible_moves(const std::vector<std::pair<int, char>>& cross_cars, int cars_amount, std::vector<std::vector<int>>& shift, std::vector<int>& move_possible, bool go_left)
 {
-    for(auto q_car: q_cars) {
+    // TODO: come from right when right
+    int start = go_left ? 0 : cross_cars.size() - 1;
+    int end   = go_left ? cross_cars.size() : -1;
+    for(int c = start; c != end; go_left ? ++c : --c) {
         int first, second, next, next_but_one;
         if(go_left) {
-            // location of q_car
-            first = q_car.first;
+            // location of cross_car
+            // this pace gets primarily moved
+            first = cross_cars[c].first;
             // secondary move
-            second = q_car.first + 1;
-            // places left or right of q_car
-            next         = second - 1;
-            next_but_one = second - 2;
+            second = cross_cars[c].first + 1;
+            // places left or right of cross_car
+            next         = first - 1;
+            next_but_one = first - 2;
         }
         else {
-            first        = q_car.first + 1;
-            second       = q_car.first;
-            next         = second + 1;
-            next_but_one = second + 2;
+            first        = cross_cars[c].first + 1;
+            second       = cross_cars[c].first;
+            next         = first + 1;
+            next_but_one = first + 2;
         }
         // check if can be moved twice
         if(next_but_one >= 0 &&
@@ -59,6 +74,9 @@ void load_possible_moves(const std::vector<std::pair<int, char>>& q_cars, int ca
                 // only half movement required
                 update_row_red(shift[next_but_one], shift[first]);
                 update_row_red(shift[next_but_one], shift[second]);
+                print_shifts(move_possible, shift, cars_amount, 'A');
+                std::cout << next_but_one << " " << first << std::endl;
+                std::cout << std::endl;
             }
             else {
                 // full movement required
@@ -67,28 +85,26 @@ void load_possible_moves(const std::vector<std::pair<int, char>>& q_cars, int ca
             }
         }
         // can be moved once at least?
-        else if(next_but_one >= 0 &&
-                next_but_one < cars_amount &&
+        else if(next >= 0 &&
+                next < cars_amount &&
                 move_possible[next] >= 1) {
             // can be moved once
             move_possible[first]  = 1;
-            move_possible[second] = 0;
+            move_possible[second] = 1;
 
-            shift[first][first]  = 1;
-            shift[first][second] = 1;
-            // doesn't actually matter <- can't be moved anyways
-            // shift[second][first]  = 0;
-            // shift[second][second] = 0;
+            // obviously has to be moved once
+            shift[first][first]   = 1;
+            shift[first][second]  = 1;
+            shift[second][first]  = 1;
+            shift[second][second] = 1;
 
             if(move_possible[next] == 2) {
                 update_row_red(shift[next], shift[first]);
-                // doesn't matter
-                // update_row_red(shift[next], shift[second]);
+                update_row_red(shift[next], shift[second]);
             }
             else {
                 update_row_dir(shift[next], shift[first]);
-                // doesn't matter
-                // update_row_dir(shift[next], shift[second]);
+                update_row_dir(shift[next], shift[second]);
             }
         }
         // can't be moved
@@ -99,21 +115,79 @@ void load_possible_moves(const std::vector<std::pair<int, char>>& q_cars, int ca
     }
 }
 
+// when is_first -> car has to be moved twice
+// reuturn true when can be moved in that direction
+bool get_required_shifts(int moves_possible, std::vector<int>& shift, bool is_first, std::vector<int>& shift_req)
+{
+    // can be moved once and only have to move once <- i is second part of cross car
+    if(moves_possible == 1 && !is_first) {
+        update_row_dir(shift, shift_req);
+        return true;
+    }
+    // can be moved twice but only has to be moved once
+    else if(moves_possible == 2 && !is_first) {
+        update_row_red(shift, shift_req);
+        return true;
+    }
+    // can be moved twice and has to be moved twice
+    else if(moves_possible == 2 && is_first) {
+        update_row_dir(shift, shift_req);
+        return true;
+    }
+    return false;
+}
+
+bool better_shift(const std::vector<int>& a, const std::vector<int>& b)
+{
+    int count_a {0}, count_b {0};
+    int moves_a {0}, moves_b {0};
+    for(int i = 0; i < a.size(); ++i) {
+        if(a[i]) {
+            ++count_a;
+            moves_a += a[i];
+        }
+        if(b[i]) {
+            ++count_b;
+            moves_b += b[i];
+        }
+    }
+    if(count_a < count_b)
+        return true;
+    if(count_a > count_b)
+        return false;
+    if(moves_a < moves_b)
+        return true;
+    if(moves_a > moves_b)
+        return false;
+    return true;
+}
+
 int main()
 {
     // read input
     char first_car, last_car;
     std::cin >> first_car >> last_car;
     int cars_amount = last_car - first_car + 1;
+    // turns location into car name
+    // name, left part of cross car?
+    std::vector<std::pair<char, bool>> cross_car_lookup(cars_amount);
 
-    int q_cars_amount;
-    std::cin >> q_cars_amount;
+    int cross_car_amount;
+    std::cin >> cross_car_amount;
     // location, name
-    std::vector<std::pair<int, char>> q_cars(q_cars_amount);
-    for(int i = 0; i < q_cars_amount; ++i) {
-        std::cin >> q_cars[i].second >> q_cars[i].first;
+    std::vector<std::pair<int, char>> cross_cars(cross_car_amount);
+    for(int i = 0; i < cross_car_amount; ++i) {
+        // paces of car
+        int  left, right;
+        char name;
+        std::cin >> name >> left;
+        right                   = left + 1;
+        cross_cars[i].first     = left;
+        cross_cars[i].second    = name;
+        cross_car_lookup[left]  = {name, true};
+        cross_car_lookup[right] = {name, false};
     }
-    std::sort(q_cars.begin(), q_cars.end());
+    std::sort(cross_cars.begin(), cross_cars.end());
 
     // 2 -> can be moved two paces
     // 1 -> can only be moved once
@@ -129,25 +203,49 @@ int main()
     std::vector<std::vector<int>> left_shift(cars_amount, std::vector<int>(cars_amount, 0));
     std::vector<std::vector<int>> right_shift(cars_amount, std::vector<int>(cars_amount, 0));
 
-    load_possible_moves(q_cars, cars_amount, left_shift, move_left_possible, true);
-    load_possible_moves(q_cars, cars_amount, right_shift, move_right_possible, false);
+    load_possible_moves(cross_cars, cars_amount, left_shift, move_left_possible, true);
+    load_possible_moves(cross_cars, cars_amount, right_shift, move_right_possible, false);
 
     std::cout << std::endl;
     std::cout << "left:" << std::endl;
-    for(int i = 0; i < cars_amount; ++i) {
-        std::cout << static_cast<char>(first_car + i) << "\t" << move_left_possible[i] << ":\t";
-        for(int y = 0; y < cars_amount; ++y) {
-            std::cout << left_shift[i][y] << " ";
-        }
-        std::cout << std::endl;
-    }
+    print_shifts(move_left_possible, left_shift, cars_amount, first_car);
     std::cout << std::endl;
     std::cout << "right:" << std::endl;
+    print_shifts(move_right_possible, right_shift, cars_amount, first_car);
+
+    // use produced tables
+    std::cout
+        << std::endl;
     for(int i = 0; i < cars_amount; ++i) {
-        std::cout << static_cast<char>(first_car + i) << "\t" << move_right_possible[i] << ":\t";
-        for(int y = 0; y < cars_amount; ++y) {
-            std::cout << right_shift[i][y] << " ";
+        // move left
+        std::vector<int> left_shift_req(cars_amount);
+        bool             left_ok = get_required_shifts(move_left_possible[i], left_shift[i], cross_car_lookup[i].second, left_shift_req);
+        // move right
+        std::vector<int> right_shift_req(cars_amount);
+        bool             right_ok = get_required_shifts(move_left_possible[i], right_shift[i], !cross_car_lookup[i].second, right_shift_req);
+
+        std::cout << static_cast<char>(first_car + i) << ": ";
+        // select better move
+        if(left_ok && better_shift(left_shift_req, right_shift_req)) {
+            std::cout << "goleft ";
+            for(int x = 0; x < left_shift_req.size(); ++x)
+                if(left_shift_req[x]) {
+                    std::cout << cross_car_lookup[x].first << " " << left_shift_req[x] << " links, ";
+                    // move to pace after current car
+                    ++x;
+                }
         }
+        else if(right_ok) {
+            std::cout << "goleft ";
+            // go the other way around <- now moving right
+            for(int x = right_shift_req.size() - 1; x; --x)
+                if(right_shift_req[x]) {
+                    std::cout << cross_car_lookup[x].first << " " << right_shift_req[x] << " rechts, ";
+                    --x;
+                }
+        }
+        else
+            std::cout << "unmoeglich" << std::endl;
         std::cout << std::endl;
     }
 }
