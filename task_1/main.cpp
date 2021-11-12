@@ -202,12 +202,14 @@ int main()
     load_possible_moves(cross_cars, cars_amount, left_shift, move_left_possible, true);
     load_possible_moves(cross_cars, cars_amount, right_shift, move_right_possible, false);
 
-    // std::cout << std::endl;
-    // std::cout << "left:" << std::endl;
-    // print_shifts(move_left_possible, left_shift, cars_amount, first_car);
-    // std::cout << std::endl;
-    // std::cout << "right:" << std::endl;
-    // print_shifts(move_right_possible, right_shift, cars_amount, first_car);
+#if 1
+    std::cout << std::endl;
+    std::cout << "left:" << std::endl;
+    print_shifts(move_left_possible, left_shift, cars_amount, first_car);
+    std::cout << std::endl;
+    std::cout << "right:" << std::endl;
+    print_shifts(move_right_possible, right_shift, cars_amount, first_car);
+#endif
 
     // use produced tables
     for(int i = 0; i < cars_amount; ++i) {
