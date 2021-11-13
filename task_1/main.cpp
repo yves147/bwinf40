@@ -6,16 +6,17 @@
 void print_shifts(const std::vector<int>& move_possible, const std::vector<std::vector<int>>& shift, int cars_amount, char first_car)
 {
     // print heading
-    std::cout << "name\tpossible moves\tshifts" << std::endl;
-    std::cout << "====\t==============\t======" << std::endl;
-    std::cout << "\t\t\t";
+    std::cout << "name possible moves shifts" << std::endl;
+    std::cout << "==== ============== ======" << std::endl;
+    std::cout << "                    ";
     for(int i = 0; i < cars_amount; ++i)
         std::cout << static_cast<char>(first_car + i) << " ";
+    std::cout << std::endl;
     std::cout << std::endl;
 
     // print table
     for(int i = 0; i < cars_amount; ++i) {
-        std::cout << static_cast<char>(first_car + i) << "\t" << move_possible[i] << "\t\t";
+        std::cout << static_cast<char>(first_car + i) << "    " << move_possible[i] << "              ";
         for(int y = 0; y < cars_amount; ++y) {
             std::cout << shift[i][y] << " ";
         }
