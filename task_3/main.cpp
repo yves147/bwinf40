@@ -40,14 +40,14 @@ struct hash<std::pair<int, int>> {
 } // namespace std
 
 enum richtung {
-    UP,
-    DOWN,
-    LEFT,
-    RIGHT,
-    UP_LEFT,
-    UP_RIGHT,
-    DOWN_LEFT,
-    DOWN_RIGHT
+    HOCH,
+    RUNTER,
+    LINKS,
+    RECHTS,
+    HOCH_LINKS,
+    HOCH_RECHTS,
+    RUNTER_LINKS,
+    RUNTER_RECHTS
 };
 
 struct point {
@@ -59,7 +59,7 @@ class Programm {
     wchar_t                       STANDARD;
     wstring                       woerter[100];
     unordered_set<pair<int, int>> avbl;
-    int                           tries = 0;
+    int                           versuche = 0;
 
 public:
     Programm();
@@ -149,7 +149,7 @@ void Programm::ausgabe()
             }
         }
     }
-    std::wcout << tries << std::endl;
+    std::wcout << versuche << std::endl;
 }
 
 point Programm::punktBewegen(point start, richtung d)
@@ -158,35 +158,35 @@ point Programm::punktBewegen(point start, richtung d)
     int   k = start.k;
     point np;
     switch(d) {
-    case UP:
+    case HOCH:
         np.i = i - 1;
         np.k = k;
         break;
-    case DOWN:
+    case RUNTER:
         np.i = i + 1;
         np.k = k;
         break;
-    case LEFT:
+    case LINKS:
         np.i = i;
         np.k = k - 1;
         break;
-    case RIGHT:
+    case RECHTS:
         np.i = i;
         np.k = k + 1;
         break;
-    case UP_LEFT:
+    case HOCH_LINKS:
         np.i = i - 1;
         np.k = k - 1;
         break;
-    case UP_RIGHT:
+    case HOCH_RECHTS:
         np.i = i - 1;
         np.k = k + 1;
         break;
-    case DOWN_LEFT:
+    case RUNTER_LINKS:
         np.i = i + 1;
         np.k = k - 1;
         break;
-    case DOWN_RIGHT:
+    case RUNTER_RECHTS:
         np.i = i + 1;
         np.k = k + 1;
         break;
@@ -197,8 +197,6 @@ point Programm::punktBewegen(point start, richtung d)
     }
 
     if(np.i < -1 || np.i > HOEHE || np.k < -1 || np.k > BREITE) {
-        //std::wcout << "Out of Bounds " << std::endl;
-        //ausgabe();
         throw "Out of Bounds";
     }
     return np;
@@ -211,7 +209,7 @@ void Programm::wortEinsetzen(const wchar_t* word)
     int      ec = 0;
     do {
         ++ec;
-        ++tries;
+        ++versuche;
         // probability < 0.0001%
         if(ec > 1000) {
             ausgabe();
@@ -237,12 +235,12 @@ void Programm::dateiAufruf(char* datei)
 {
     wifstream woerterDatei(datei);
     wstring   wort;
-    int       line = 0;
+    int       zeile = 0;
     if(woerterDatei.is_open()) {
         while(getline(woerterDatei, wort)) {
-            woerter[line] = wort;
+            woerter[zeile] = wort;
             std::wcout << wort << std::endl;
-            ++line;
+            ++zeile;
             if(wort.length() < 2 || wort.length() > BREITE) {
                 throw "length/gridsize";
             }
@@ -259,7 +257,7 @@ void Programm::dateiAuslesen()
         }
         catch(const char*& e) {
             //loeschen();
-            tries = 0;
+            versuche = 0;
             std::wcout << "er rr" << std::endl;
         }
     }
