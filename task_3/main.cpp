@@ -3,7 +3,6 @@
 #include <cstdio>
 #include <cstring>
 #include <exception>
-#include <sys/io.h>
 #include <fcntl.h>
 #include <fstream>
 #include <iostream>
@@ -11,6 +10,7 @@
 #include <sstream>
 #include <stdlib.h>
 #include <string>
+#include <sys/io.h>
 #include <unordered_set>
 
 using namespace std;
@@ -18,7 +18,7 @@ using namespace std;
 const int HOEHE  = 42;
 const int BREITE = 30;
 
-const int DIFFICULTY = 0;
+const int DIFFICULTY = 2;
 
 template<typename S>
 auto select_random(const S& s, size_t n)
@@ -42,12 +42,12 @@ struct hash<std::pair<int, int>> {
 enum richtung {
     HOCH,
     RUNTER,
-    LINKS,
     RECHTS,
-    HOCH_LINKS,
-    HOCH_RECHTS,
+    LINKS,
     RUNTER_LINKS,
-    RUNTER_RECHTS
+    RUNTER_RECHTS,
+    HOCH_LINKS,
+    HOCH_RECHTS
 };
 
 struct point {
@@ -81,7 +81,15 @@ Programm::Programm()
 
 char Programm::zufallsCharakter()
 {
-    return 'A' + rand() % 26;
+    if(DIFFICULTY == 0) {
+        return 'A' + rand() % 26;
+    }
+    else if(DIFFICULTY == 1) {
+        return ' ';
+    }
+    else if(DIFFICULTY == 2) {
+        return 'A' + rand() % 26;
+    }
 }
 
 void Programm::loeschen()
@@ -96,7 +104,7 @@ void Programm::loeschen()
 
 bool Programm::kannEinsetzen(const wchar_t* word, point start, richtung d)
 {
-    int   i          = 0;
+    int   i  = 0;
     point np = start;
     while(i < (int)std::char_traits<wchar_t>::length(word)) {
         try {
@@ -121,11 +129,7 @@ void Programm::fuellen()
     for(int i = 0; i < HOEHE; i++) {
         for(int k = 0; k < BREITE; k++) {
             if(grid[i][k] == STANDARD) {
-                switch(DIFFICULTY) {
-                case 0:
-                    grid[i][k] = zufallsCharakter();
-                    break;
-                }
+                grid[i][k] = zufallsCharakter();
             }
         }
     }
@@ -219,14 +223,23 @@ void Programm::wortEinsetzen(const wchar_t* word)
         auto n  = *select_random(avbl, r);
         start.i = n.first;
         start.k = n.second;
-        d       = richtung(rand() % 8);
+        switch(DIFFICULTY) {
+        case 0:
+            d = richtung(rand() % 3);
+            break;
+        case 1:
+            d = richtung(rand() % 6);
+            break;
+        case 2:
+            d = richtung(rand() % 8);
+        }
     } while(!kannEinsetzen(word, start, d));
-    int   i          = 0;
+    int   i  = 0;
     point np = start;
     while(i < (int)std::char_traits<wchar_t>::length(word)) {
         avbl.erase(make_pair(np.i, np.k));
         grid[np.i][np.k] = (wchar_t)towupper(word[i]);
-        np                       = punktBewegen(np, d);
+        np               = punktBewegen(np, d);
         i++;
     }
 }
@@ -250,7 +263,18 @@ void Programm::dateiAufruf(char* datei)
 
 void Programm::dateiAuslesen()
 {
-    for(int i = 0; i < (int)(sizeof(woerter) / sizeof(woerter[0])); i++) {
+    int groesse = (int)(sizeof(woerter) / sizeof(woerter[0]));
+    if(DIFFICULTY == 2) {
+        for(int i = 0; i < 10; ++i) {
+            std::cout << groesse;
+            int rindex = rand() % groesse;
+            wstring wordOriginal = woerter[rindex];
+            wstring wordDanach   = L"?" + wordOriginal.substr(0, 2 + rand() % 3);
+            std::wcout << L"-----------------" << (groesse - i) << std::endl;
+            woerter[groesse - i - 1]   = wordDanach;
+        }
+    }
+    for(int i = 0; i < groesse; i++) {
         wstring word = woerter[i];
         try {
             wortEinsetzen(word.c_str());
