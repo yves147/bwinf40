@@ -1,8 +1,8 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2021.10.5)  12 NOV 2021 17:54
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2021.10.5)  13 NOV 2021 18:24
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
-**task_1.tex pdflatex task_1.tex
+**task_1.tex
 (./task_1.tex
 LaTeX2e <2020-02-02> patch level 5
 L3 programming layer <2020-04-06>
@@ -502,30 +502,39 @@ LaTeX Info: Redefining \labelcpageref on input line 2370.
 Package cleveref Info: `algorithmicx' support loaded on input line 3120.
 Package cleveref Info: `listings' support loaded on input line 3131.
 )
+(/usr/share/texlive/texmf-dist/tex/latex/enumitem/enumitem.sty
+Package: enumitem 2019/06/20 v3.9 Customized lists
+\labelindent=\skip73
+\enit@outerparindent=\dimen163
+\enit@toks=\toks28
+\enit@inbox=\box51
+\enit@count@id=\count285
+\enitdp@description=\count286
+)
 (/usr/share/texlive/texmf-dist/tex/latex/l3backend/l3backend-pdfmode.def
 File: l3backend-pdfmode.def 2020-03-12 L3 backend support: PDF mode
-\l__kernel_color_stack_int=\count285
-\l__pdf_internal_box=\box51
+\l__kernel_color_stack_int=\count287
+\l__pdf_internal_box=\box52
 )
 (./task_1.aux)
 \openout1 = `task_1.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 70.
-LaTeX Font Info:    ... okay on input line 70.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 70.
-LaTeX Font Info:    ... okay on input line 70.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 70.
-LaTeX Font Info:    ... okay on input line 70.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 70.
-LaTeX Font Info:    ... okay on input line 70.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 70.
-LaTeX Font Info:    ... okay on input line 70.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 70.
-LaTeX Font Info:    ... okay on input line 70.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 70.
-LaTeX Font Info:    ... okay on input line 70.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 70.
-LaTeX Font Info:    ... okay on input line 70.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 71.
+LaTeX Font Info:    ... okay on input line 71.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 71.
+LaTeX Font Info:    ... okay on input line 71.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 71.
+LaTeX Font Info:    ... okay on input line 71.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 71.
+LaTeX Font Info:    ... okay on input line 71.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 71.
+LaTeX Font Info:    ... okay on input line 71.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 71.
+LaTeX Font Info:    ... okay on input line 71.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 71.
+LaTeX Font Info:    ... okay on input line 71.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 71.
+LaTeX Font Info:    ... okay on input line 71.
  (/usr/share/texlive/texmf-dist/tex/latex/ucs/ucsencs.def
 File: ucsencs.def 2011/01/21 Fixes to fontencodings LGR, T3
 )
@@ -565,32 +574,40 @@ File: ucsencs.def 2011/01/21 Fixes to fontencodings LGR, T3
 
 Package lastpage Info: Please have a look at the pageslts package at
 (lastpage)             https://www.ctan.org/pkg/pageslts
-(lastpage)             ! on input line 70.
+(lastpage)             ! on input line 71.
 (/usr/share/texlive/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count286
-\scratchdimen=\dimen163
-\scratchbox=\box52
-\nofMPsegments=\count287
-\nofMParguments=\count288
-\everyMPshowfont=\toks28
-\MPscratchCnt=\count289
-\MPscratchDim=\dimen164
-\MPnumerator=\count290
-\makeMPintoPDFobject=\count291
-\everyMPtoPDFconversion=\toks29
+\scratchcounter=\count288
+\scratchdimen=\dimen164
+\scratchbox=\box53
+\nofMPsegments=\count289
+\nofMParguments=\count290
+\everyMPshowfont=\toks29
+\MPscratchCnt=\count291
+\MPscratchDim=\dimen165
+\MPnumerator=\count292
+\makeMPintoPDFobject=\count293
+\everyMPtoPDFconversion=\toks30
 ) (/usr/share/texlive/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty
 Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
+
+(/usr/share/texlive/texmf-dist/tex/latex/grfext/grfext.sty
+Package: grfext 2019/12/03 v1.3 Manage graphics extensions (HO)
+)
 Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
 85.
+Package grfext Info: Graphics extension search list:
+(grfext)             [.pdf,.png,.jpg,.mps,.jpeg,.jbig2,.jb2,.PDF,.PNG,.JPG,.JPE
+G,.JBIG2,.JB2,.eps]
+(grfext)             \AppendGraphicsExtensions on input line 504.
 
 (/usr/share/texlive/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
 File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
 e
 ))
-\c@lstlisting=\count292
-\AtBeginShipoutBox=\box53
-Package hyperref Info: Link coloring OFF on input line 70.
+\c@lstlisting=\count294
+\AtBeginShipoutBox=\box54
+Package hyperref Info: Link coloring OFF on input line 71.
 
 (/usr/share/texlive/texmf-dist/tex/latex/hyperref/nameref.sty
 Package: nameref 2019/09/16 v2.46 Cross-referencing by name of section
@@ -601,11 +618,11 @@ Package: refcount 2019/12/15 v3.6 Data extraction from label references (HO)
 (/usr/share/texlive/texmf-dist/tex/generic/gettitlestring/gettitlestring.sty
 Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
 )
-\c@section@level=\count293
+\c@section@level=\count295
 )
-LaTeX Info: Redefining \ref on input line 70.
-LaTeX Info: Redefining \pageref on input line 70.
-LaTeX Info: Redefining \nameref on input line 70.
+LaTeX Info: Redefining \ref on input line 71.
+LaTeX Info: Redefining \pageref on input line 71.
+LaTeX Info: Redefining \nameref on input line 71.
 
 (./task_1.out) (./task_1.out)
 \@outlinefile=\write3
@@ -618,7 +635,7 @@ Class scrartcl Info: loading recommended package `bookmark'.
 (scrartcl)           `bookmarkpackage=false' before \begin{document} and
 (scrartcl)           you can avoid this message adding:
 (scrartcl)             \usepackage{bookmark}
-(scrartcl)           before \begin{document} on input line 70.
+(scrartcl)           before \begin{document} on input line 71.
 
 (/usr/share/texlive/texmf-dist/tex/latex/bookmark/bookmark.sty
 Package: bookmark 2019/12/03 v1.28 PDF bookmarks (HO)
@@ -628,22 +645,22 @@ File: bkm-pdftex.def 2019/12/03 v1.28 bookmark driver for pdfTeX (HO)
 Package auxhook Info: \AddLineBeginMainAux comes a little late,
 (auxhook)             because the main .aux file is already opened on input lin
 e 168.
-\BKM@id=\count294
+\BKM@id=\count296
 ))
-LaTeX Font Info:    Trying to load font information for U+msa on input line 73.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 74.
 
 
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 73.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 74.
 
 
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
 LaTeX Font Info:    Trying to load font information for T1+cmss on input line 7
-3.
+4.
 
 (/usr/share/texlive/texmf-dist/tex/latex/base/t1cmss.fd
 File: t1cmss.fd 2019/12/16 v2.5j Standard LaTeX font definitions
@@ -659,47 +676,65 @@ File: uni-0.def 2013/05/13 UCS: Unicode data U+0000..U+00FF
 ) [1
 
 {/usr/share/texlive/texmf-dist/fonts/map/pdftex/updmap/pdftex.map}]
+(/usr/share/texlive/texmf-dist/tex/latex/listings/lstlang1.sty
+File: lstlang1.sty 2020/03/24 1.8d listings language file
+)
+(/usr/share/texlive/texmf-dist/tex/latex/listings/lstlang1.sty
+File: lstlang1.sty 2020/03/24 1.8d listings language file
+)
+(/usr/share/texlive/texmf-dist/tex/latex/listings/lstmisc.sty
+File: lstmisc.sty 2020/03/24 1.8d (Carsten Heinz)
+)
+LaTeX Font Info:    Trying to load font information for T1+cmtt on input line 1
+58.
 
+(/usr/share/texlive/texmf-dist/tex/latex/base/t1cmtt.fd
+File: t1cmtt.fd 2019/12/16 v2.5j Standard LaTeX font definitions
+) [2]
+Overfull \hbox (1.0889pt too wide) in paragraph at lines 200--202
+[]\T1/cmr/m/n/10 Um die Ka-te-go-ri-en und Ver-schie-bungs-be-stim-mun-gen zu b
+e-rech-nen wird die Funk-ti-on [][][]
+ []
+
+[3] [4] [5] [6] [7] [8] [9] [10] 
 AED: lastpage setting LastPage
-[2]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 124.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 124.
+[11]
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 754.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 754.
  (./task_1.aux
 Package cleveref Info: loaded `ngerman' language definitions on input line 24.
 )
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 124.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 124.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 754.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 754.
 Package rerunfilecheck Info: File `task_1.out' has not changed.
 (rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
-
-
-LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
-
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 124.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 754.
  ) 
 Here is how much of TeX's memory you used:
- 16342 strings out of 480623
- 304280 string characters out of 5906692
- 756263 words of memory out of 6000000
- 31993 multiletter control sequences out of 15000+600000
- 545155 words of font info for 59 fonts, out of 8000000 for 9000
+ 17873 strings out of 480623
+ 325781 string characters out of 5906692
+ 1009054 words of memory out of 6000000
+ 32929 multiletter control sequences out of 15000+600000
+ 548082 words of font info for 64 fonts, out of 8000000 for 9000
  1137 hyphenation exceptions out of 8191
- 48i,20n,76p,10139b,684s stack positions out of 5000i,500n,10000p,200000b,80000s
-{/usr/share/texlive/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc}{/us
-r/share/texlive/texmf-dist/fonts/enc/dvips/cm-super/cm-super-t1.enc}</usr/share
+ 52i,21n,77p,10119b,2128s stack positions out of 5000i,500n,10000p,200000b,80000s
+{/usr/share/texlive/texmf-dist/fonts/enc/dvips/cm-super/cm-super-t1.enc}{/usr
+/share/texlive/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc}</usr/share
 /texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texli
 ve/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texm
 f-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist
 /fonts/type1/public/cm-super/sfbx2488.pfb></usr/share/texlive/texmf-dist/fonts/
-type1/public/cm-super/sfrm1000.pfb></usr/share/texlive/texmf-dist/fonts/type1/p
-ublic/cm-super/sfrm1200.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/c
-m-super/sfrm1728.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/cm-super
-/sfsx1000.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/cm-super/sfsx14
-40.pfb>
-Output written on task_1.pdf (2 pages, 128637 bytes).
+type1/public/cm-super/sfrm0500.pfb></usr/share/texlive/texmf-dist/fonts/type1/p
+ublic/cm-super/sfrm1000.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/c
+m-super/sfrm1200.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/cm-super
+/sfrm1728.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/cm-super/sfsx10
+00.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/cm-super/sfsx1200.pfb>
+</usr/share/texlive/texmf-dist/fonts/type1/public/cm-super/sfsx1440.pfb></usr/s
+hare/texlive/texmf-dist/fonts/type1/public/cm-super/sftt0800.pfb>
+Output written on task_1.pdf (11 pages, 254672 bytes).
 PDF statistics:
- 86 PDF objects out of 1000 (max. 8388607)
- 72 compressed objects within 1 object stream
- 11 named destinations out of 1000 (max. 500000)
+ 829 PDF objects out of 1000 (max. 8388607)
+ 796 compressed objects within 8 object streams
+ 582 named destinations out of 1000 (max. 500000)
  33 words of extra memory for PDF output out of 10000 (max. 10000000)
 
