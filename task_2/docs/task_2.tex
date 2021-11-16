@@ -1,0 +1,140 @@
+\documentclass[a4paper,10pt,ngerman]{scrartcl}
+\usepackage{babel}
+\usepackage[T1]{fontenc}
+\usepackage[utf8x]{inputenc}
+\usepackage[a4paper,margin=2.5cm,footskip=0.5cm]{geometry}
+
+% Die nächsten vier Felder bitte anpassen:
+\newcommand{\Aufgabe}{Aufgabe 1: Schiebeparkplatz} % Aufgabennummer und Aufgabennamen angeben
+\newcommand{\TeamId}{00067}                       % Team-ID aus dem PMS angeben
+\newcommand{\TeamName}{Panic! at the Kernel}                 % Team-Namen angeben
+\newcommand{\Namen}{Christopher Besch}           % Namen der Bearbeiter/-innen dieser Aufgabe angeben
+ 
+% Kopf- und Fußzeilen
+\usepackage{scrlayer-scrpage, lastpage}
+\setkomafont{pageheadfoot}{\large\textrm}
+\lohead{\Aufgabe}
+\rohead{Team-ID: \TeamId}
+\cfoot*{\thepage{}/\pageref{LastPage}}
+
+% Position des Titels
+\usepackage{titling}
+\setlength{\droptitle}{-1.0cm}
+
+% Für mathematische Befehle und Symbole
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+% Für Bilder
+\usepackage{graphicx}
+
+% Für Algorithmen
+\usepackage{algpseudocode}
+
+% Für Quelltext
+\usepackage{listings}
+\usepackage{color}
+\definecolor{mygreen}{rgb}{0,0.6,0}
+\definecolor{mygray}{rgb}{0.5,0.5,0.5}
+\definecolor{mymauve}{rgb}{0.58,0,0.82}
+\lstset{
+  keywordstyle=\color{blue},commentstyle=\color{mygreen},
+  stringstyle=\color{mymauve},rulecolor=\color{black},
+  basicstyle=\footnotesize\ttfamily,numberstyle=\tiny\color{mygray},
+  captionpos=b, % sets the caption-position to bottom
+  keepspaces=true, % keeps spaces in text
+  numbers=left, numbersep=5pt, showspaces=false,showstringspaces=true,
+  showtabs=false, stepnumber=2, tabsize=2, title=\lstname
+}
+\lstdefinelanguage{JavaScript}{ % JavaScript ist als einzige Sprache noch nicht vordefiniert
+  keywords={break, case, catch, continue, debugger, default, delete, do, else, finally, for, function, if, in, instanceof, new, return, switch, this, throw, try, typeof, var, void, while, with},
+  morecomment=[l]{//},
+  morecomment=[s]{/*}{*/},
+  morestring=[b]',
+  morestring=[b]",
+  sensitive=true
+}
+
+% Diese beiden Pakete müssen zuletzt geladen werden
+\usepackage{hyperref} % Anklickbare Links im Dokument
+\usepackage{cleveref}
+\usepackage[shortlabels]{enumitem}
+
+% Daten für die Titelseite
+\title{\textbf{\Huge\Aufgabe}}
+\author{\LARGE Team-ID: \LARGE \TeamId \\\\
+	    \LARGE Team-Name: \LARGE \TeamName \\\\
+	    \LARGE Bearbeiter/-innen dieser Aufgabe: \\ 
+	    \LARGE \Namen\\\\}
+\date{\LARGE\today}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+\vspace{0.5cm}
+
+\section{Lösungsidee}
+% Die Idee der Lösung sollte hieraus vollkommen ersichtlich werden, ohne dass auf die eigentliche Implementierung Bezug genommen wird.
+Fuer jedes Hotel laesst sich sagen, ob es innerhalb von $d$ Tagen erreicht werden kann.
+Ist dies fuer ein $d$ der Fall, kann fuer die minimale Bewertung aller auf dem optimalen Weg zu ihm liegenden Hotels angegeben werden.
+Dieser optimale Weg benoetigt genau $d$ Tage.
+Zudem ist er in dem Sinne optimal, dass kein anderer Weg existiert, der in $d$ Tagen das Hotel erreicht und eine besserer minimale Bewertung aufweist.
+Diese Werte koennen in einer Tabelle dargestellt werden:
+\begin{lstlisting}
+            min rating at day:
+idx rating  0   1   2   3   4   5
+=== ======  =   =   =   =   =   =
+0   inf     inf
+1   4.3         4.3
+2   4.8         4.8 4.3
+3   2.7         2.7 2.7 2.7
+4   2.6         2.6 2.6 2.6 2.6
+5   3.6             3.6 3.6 2.7 2.6
+6   0.8             0.8 0.8 0.8 0.8
+7   4.4             2.7 3.6 3.6 2.7
+8   2.8                 2.7 2.8 2.8
+9   2.6                 2.6 2.6 2.6
+10  2.1                     2.1 2.1
+11  2.8                     2.7 2.8
+12  3.3                         2.7
+13  inf                         2.7
+\end{lstlisting}
+Neben den Hotels werde hier mit dem Index $0$ der Startort und mit $13$ das Ziel gelistet.
+Dessen Bewertung ist nie schlechter als die eines beliebigen Hotels, weshalb sie als unendlich angesehen wird.
+Da eine Fahrt, die laenger als fuenf Tage dauert nicht zulaessig ist, werden diese Optionen weggelassen.
+
+Anhand dieser Daten laesst sich recht leicht die minimale Bewertung auf dem Weg zu jedem beliebigen Hotel ausgeben.
+Interessant ist dieser Wert fuer das Ziel.
+Es muss lediglich das Minimum aller Werte in der letzten Zeile bestimmt werden.
+
+Um nun die einzelnen Hotels, die optimal zum Ziel fuehren, zu bestimmen, wird eine zweite Tabelle benoetigt.
+Diese weist die gleichen Dimensionen auf, gibt allerdings fuer jedes Hotel $x$ und Tag $d$ das Hotel, das am vorherigen Tag zuletzt besucht wurde, an.
+So kann vom Ziel am optimalen Tag ausgehend immer das zuletzt besuchte Hotel bestimmt werden.
+Dieser Vorgang endet, wenn man am Anfang angekommen ist.
+
+\subsection{Berechnung der Tabellen}
+Als Taglaenge wird die Strecke verstanden, die an einem Tag zurueckgelegt werden kann.
+Zu jedem Hotel $x$ kann man am Tag $d$ von allen Hotels, die maximal eine Taglaenge vor $a$ liegt und innerhalb von genau $d-1$ Tagen erreichbar sind, gelangen.
+Diese Hotels bilden die Menge $Y$.
+Alle Hotels, die hinter $x$ liegen, sind nicht zu verwenden.
+Die minimale Bewertung zum Hotel $x$ nach $d$ Tagen betraegt mit der minimalen Bewertungen $z_y$ zum Hotel $y$ nach $d-1$ Tagen mit $y\in Y$:
+\begin{equation*}
+    min(z_1,  z_2, \dots , z_n)
+\end{equation*}
+
+Da so immer nur die Information von Hotels, die vor dem aktuellen liegen, benoetigt werden, kann das Prinzip der dynamischen Programmierung verwendet werden.
+Hierbei werden die Tabellen anfangend beim Start Hotel fuer Hotel gefuellt.
+Jedes weitere Hotel benoetigt ausschlisslich die bereits berechnete Information.
+
+\section{Umsetzung}
+% Hier wird kurz erläutert, wie die Lösungsidee im Programm tatsächlich umgesetzt wurde. Hier können auch Implementierungsdetails erwähnt werden.
+
+\section{Beispiele}
+% Genügend Beispiele einbinden! Die Beispiele von der BwInf-Webseite sollten hier diskutiert werden, aber auch eigene Beispiele sind sehr gut – besonders wenn sie Spezialfälle abdecken. Aber bitte nicht 30 Seiten Programmausgabe hier einfügen!
+
+\section{Quellcode}
+% Unwichtige Teile des Programms sollen hier nicht abgedruckt werden. Dieser Teil sollte nicht mehr als 2–3 Seiten umfassen, maximal 10.
+
+\end{document}

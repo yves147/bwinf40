@@ -47,13 +47,6 @@ int main()
         }
     }
 
-    // for(auto y: min_ratings) {
-    //     for(auto x: y) {
-    //         std::cout << x << " ";
-    //     }
-    //     std::cout << std::endl;
-    // }
-
     int   best_day {-1};
     float best_min_rating {-1};
     for(int i = 0; i < DAYS + 1; ++i) {
@@ -62,22 +55,54 @@ int main()
             best_day        = i;
         }
     }
-    if(best_day == -1) {
-        std::cout << "impossible" << std::endl;
-    }
-    else {
-        std::cout << "possible with min rating: " << best_min_rating << std::endl;
-        // reconstruct path
-        std::vector<int> path;
-        int              cur_idx = last_hotel[n + 1][best_day];
+    // reconstruct path
+    std::vector<int> path;
+    if(best_day != -1) {
+        int cur_idx = last_hotel[n + 1][best_day];
         for(int cur_day = best_day - 1; cur_day; --cur_day) {
             path.push_back(cur_idx);
             cur_idx = last_hotel[cur_idx][cur_day];
         }
         std::reverse(path.begin(), path.end());
-        std::cout << "these hotels should be used (displayed as 'index:location-rating'): ";
-        for(auto idx: path) {
-            std::cout << idx << ":" << hotels[idx].first << "-" << hotels[idx].second << "\t";
+    }
+
+    // print table
+    std::cout << "   \t      \t  min rating at day:" << std::endl;
+    std::cout << "idx\trating\t  0\t1\t2\t3\t4\t5" << std::endl;
+    std::cout << "===\t======\t  =\t=\t=\t=\t=\t=" << std::endl;
+    for(int hotel_id = 0; hotel_id < n + 2; ++hotel_id) {
+        std::cout << hotel_id << "\t";
+        if(hotels[hotel_id].second == inf)
+            std::cout << "inf\t";
+        else
+            std::cout << hotels[hotel_id].second << "\t";
+        if(std::find(path.begin(), path.end(), hotel_id) != path.end())
+            std::cout << "+ ";
+        else
+            std::cout << "  ";
+        for(float x: min_ratings[hotel_id]) {
+            if(x == -1)
+                std::cout << " \t";
+            else if(x == inf)
+                std::cout << "inf\t";
+            else
+                std::cout << x << "\t";
+        }
+        std::cout << std::endl;
+    }
+    std::cout << std::endl;
+
+    // print path
+    if(best_day == -1) {
+        std::cout << "impossible" << std::endl;
+    }
+    else {
+        std::cout << "these hotels should be used with min rating " << best_min_rating << ":" << std::endl;
+        std::cout << "idx\tlocation\trating\tmin rating till here" << std::endl;
+        std::cout << "===\t========\t======\t====================" << std::endl;
+        for(int day = 1; day < DAYS; ++day) {
+            int idx = path[day - 1];
+            std::cout << idx << "\t" << hotels[idx].first << "\t\t" << hotels[idx].second << "\t" << min_ratings[idx][day] << std::endl;
         }
         std::cout << std::endl;
     }
