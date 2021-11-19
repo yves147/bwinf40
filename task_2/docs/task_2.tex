@@ -81,7 +81,7 @@ Fuer jedes Hotel laesst sich sagen, ob es innerhalb von $d$ Tagen erreicht werde
 Ist dies fuer ein $d$ der Fall, kann fuer die minimale Bewertung aller auf dem optimalen Weg zu ihm liegenden Hotels angegeben werden.
 Dieser optimale Weg benoetigt genau $d$ Tage.
 Zudem ist er in dem Sinne optimal, dass kein anderer Weg existiert, der in $d$ Tagen das Hotel erreicht und eine besserer minimale Bewertung aufweist.
-Diese Werte koennen in einer Tabelle dargestellt werden:
+Diese Werte koennen in einer Tabelle---der Minimumstabelle---dargestellt werden:
 \begin{lstlisting}
             min rating at day:
 idx rating  0   1   2   3   4   5
@@ -109,7 +109,7 @@ Anhand dieser Daten laesst sich recht leicht die minimale Bewertung auf dem Weg 
 Interessant ist dieser Wert fuer das Ziel.
 Es muss lediglich das Minimum aller Werte in der letzten Zeile bestimmt werden.
 
-Um nun die einzelnen Hotels, die optimal zum Ziel fuehren, zu bestimmen, wird eine zweite Tabelle benoetigt.
+Um nun die einzelnen Hotels, die optimal zum Ziel fuehren, zu bestimmen, wird eine zweite Tabelle---die Vorgaengertabelle---benoetigt.
 Diese weist die gleichen Dimensionen auf, gibt allerdings fuer jedes Hotel $x$ und Tag $d$ das Hotel, das am vorherigen Tag zuletzt besucht wurde, an.
 So kann vom Ziel am optimalen Tag ausgehend immer das zuletzt besuchte Hotel bestimmt werden.
 Dieser Vorgang endet, wenn man am Anfang angekommen ist.
@@ -119,22 +119,104 @@ Als Taglaenge wird die Strecke verstanden, die an einem Tag zurueckgelegt werden
 Zu jedem Hotel $x$ kann man am Tag $d$ von allen Hotels, die maximal eine Taglaenge vor $a$ liegt und innerhalb von genau $d-1$ Tagen erreichbar sind, gelangen.
 Diese Hotels bilden die Menge $Y$.
 Alle Hotels, die hinter $x$ liegen, sind nicht zu verwenden.
-Die minimale Bewertung zum Hotel $x$ nach $d$ Tagen betraegt mit der minimalen Bewertungen $z_y$ zum Hotel $y$ nach $d-1$ Tagen mit $y\in Y$:
+Die minimale $a$ Bewertung zum Hotel $x$ nach $d$ Tagen entspricht mit
+\begin{itemize}
+    \item dem Minimum $b$ der Werte aus der Minimumstabelle fuer aller Hotels aus $Y$ und den Tag $d-1$ und
+    \item der Bewertung des Hotels $x$:
+\end{itemize}
 \begin{equation*}
-    min(z_1,  z_2, \dots , z_n)
+    a = b + c
 \end{equation*}
+$a$ wird in der Minimumstabelle gespeichert.
+Der entsprechende Wert in der Vorgaengertabelle entspricht dem Index des Hotels dessen
 
 Da so immer nur die Information von Hotels, die vor dem aktuellen liegen, benoetigt werden, kann das Prinzip der dynamischen Programmierung verwendet werden.
-Hierbei werden die Tabellen anfangend beim Start Hotel fuer Hotel gefuellt.
-Jedes weitere Hotel benoetigt ausschlisslich die bereits berechnete Information.
+Hierbei werden die Tabellen anfangend beim \glqq{}Start\grqq{} Hotel fuer Hotel gefuellt.
+Jedes weitere Hotel benoetigt ausschliesslich die bereits berechnete Information.
 
-\section{Umsetzung}
+\section{Umsetzung und Quellcode}
 % Hier wird kurz erläutert, wie die Lösungsidee im Programm tatsächlich umgesetzt wurde. Hier können auch Implementierungsdetails erwähnt werden.
+Die Loesungsidee wird in C++ implementiert.
+Zur Repraesentation der Tabellen werden mehrdimensionale vectors benutzt:
+\begin{lstlisting}[language=C++]
+// min_ratings[x][y] -> min rating till hotel x requiring y days to get to
+// -1 -> impossible
+std::vector<std::vector<float>> min_ratings(n + 2, std::vector<float>(DAYS + 1, -1));
+std::vector<std::vector<int>>   last_hotel(n + 2, std::vector<int>(DAYS + 1, -1));
+\end{lstlisting}
+
+Nun kann mit der Funktion \lstinline{populate_tables} diese Tabellen der Loesungsidee nach fuellen.
+\begin{lstlisting}[language=C++]
+void populate_tables(
+    const std::vector<std::pair<int, float>>& hotels,
+    std::vector<std::vector<float>>&          min_ratings,
+    std::vector<std::vector<int>>&            last_hotel)
+{
+    // the "first" (virtual) hotel never has the worst rating
+    min_ratings[0][0] = inf;
+    // go through all but "first" hotels
+    for(auto cur = hotels.begin() + 1; cur != hotels.end(); ++cur) {
+        int cur_idx = cur - hotels.begin();
+        // first hotel `cur` can be reached from
+        auto prev = std::lower_bound(hotels.begin(), hotels.end(),
+                                     std::make_pair(cur->first - DAY_LEN, .0f));
+        for(; prev != cur; ++prev) {
+            int prev_idx = prev - hotels.begin();
+            // go through past days when prev can be reached
+            // call ride off after `DAYS` days
+            for(int prev_day = 0, cur_day = 1; prev_day < DAYS; ++prev_day, ++cur_day) {
+                // if the hotel `prev` can't be reached in `prev_day` days
+                if(min_ratings[prev_idx][prev_day] == -1)
+                    continue;
+                float new_min = std::min(min_ratings[prev_idx][prev_day], cur->second);
+                // update when better
+                if(new_min > min_ratings[cur_idx][cur_day]) {
+                    min_ratings[cur_idx][cur_day] = new_min;
+                    last_hotel[cur_idx][cur_day]  = prev_idx;
+                }
+            }
+        }
+    }
+}
+\end{lstlisting}
+
+Wenn die Tabellen produziert wurde, koennen mit \lstinline{get_best_day} die Wert des \glqq{}Zielhotel\grqq{} in der Minimumstabelle linear nach dem Optimum durchsucht werden:
+\begin{lstlisting}[language=C++]
+int get_best_day(const std::vector<std::vector<float>>& min_ratings, int n)
+{
+    int   best_day {-1};
+    float best_min_rating {-1};
+    for(int i = 0; i < DAYS + 1; ++i) {
+        if(min_ratings[n + 1][i] > best_min_rating) {
+            best_min_rating = min_ratings[n + 1][i];
+            best_day        = i;
+        }
+    }
+    return best_day;
+}
+\end{lstlisting}
+
+Wurde festgestellt, dass es einen Weg zum \glqq{}Zielhotel\grqq{} innerhalb von fuenf Tagen gibt, kann der optimale Weg mithilfe der Funktion \lstinline{construct_path} bestimmt werden:
+\begin{lstlisting}[language=C++]
+void construct_path(
+    const std::vector<std::vector<int>>& last_hotel,
+    int                                  best_day,
+    int                                  n,
+    std::vector<int>&                    path)
+{
+    int cur_idx = last_hotel[n + 1][best_day];
+    for(int cur_day = best_day - 1; cur_day; --cur_day) {
+        path.push_back(cur_idx);
+        cur_idx = last_hotel[cur_idx][cur_day];
+    }
+    std::reverse(path.begin(), path.end());
+}
+\end{lstlisting}
+Hierbei wird \lstinline{cur_idx} immer so aktualisiert, dass immer das jeweilig vorhergehende Hotel referenziert wird.
+
+Zum Schluss werden die beiden Tabellen und der finale, optimale Weg ausgegeben.
 
 \section{Beispiele}
 % Genügend Beispiele einbinden! Die Beispiele von der BwInf-Webseite sollten hier diskutiert werden, aber auch eigene Beispiele sind sehr gut – besonders wenn sie Spezialfälle abdecken. Aber bitte nicht 30 Seiten Programmausgabe hier einfügen!
-
-\section{Quellcode}
-% Unwichtige Teile des Programms sollen hier nicht abgedruckt werden. Dieser Teil sollte nicht mehr als 2–3 Seiten umfassen, maximal 10.
 
 \end{document}
