@@ -83,23 +83,23 @@ Dieser optimale Weg benoetigt genau $d$ Tage.
 Zudem ist er in dem Sinne optimal, dass kein anderer Weg existiert, der in $d$ Tagen das Hotel erreicht und eine besserer minimale Bewertung aufweist.
 Diese Werte koennen in einer Tabelle---der Minimumstabelle---dargestellt werden:
 \begin{lstlisting}
-            min rating at day:
-idx rating  0   1   2   3   4   5
-=== ======  =   =   =   =   =   =
-0   inf     inf
-1   4.3         4.3
-2   4.8         4.8 4.3
-3   2.7         2.7 2.7 2.7
-4   2.6         2.6 2.6 2.6 2.6
-5   3.6             3.6 3.6 2.7 2.6
-6   0.8             0.8 0.8 0.8 0.8
-7   4.4             2.7 3.6 3.6 2.7
-8   2.8                 2.7 2.8 2.8
-9   2.6                 2.6 2.6 2.6
-10  2.1                     2.1 2.1
-11  2.8                     2.7 2.8
-12  3.3                         2.7
-13  inf                         2.7
+                  min rating at day:
+idx     rating    0     1       2       3       4       5
+===     ======    =     =       =       =       =       =
+0       inf       inf
+1       4.3             4.3
+2       4.8             4.8     4.3
+3       2.7             2.7     2.7     2.7
+4       2.6             2.6     2.6     2.6     2.6
+5       3.6                     3.6     3.6     2.7     2.6
+6       0.8                     0.8     0.8     0.8     0.8
+7       4.4                     2.7     3.6     3.6     2.7
+8       2.8                             2.7     2.8     2.8
+9       2.6                             2.6     2.6     2.6
+10      2.1                                     2.1     2.1
+11      2.8                                     2.7     2.8
+12      3.3                                             2.7
+13      inf                                             2.7
 \end{lstlisting}
 Neben den Hotels werde hier mit dem Index $0$ der Startort und mit $13$ das Ziel gelistet.
 Dessen Bewertung ist nie schlechter als die eines beliebigen Hotels, weshalb sie als unendlich angesehen wird.
@@ -144,6 +144,8 @@ Zur Repraesentation der Tabellen werden mehrdimensionale vectors benutzt:
 std::vector<std::vector<float>> min_ratings(n + 2, std::vector<float>(DAYS + 1, -1));
 std::vector<std::vector<int>>   last_hotel(n + 2, std::vector<int>(DAYS + 1, -1));
 \end{lstlisting}
+\lstinline{DAYS} entspricht der Anzahl an Tagen, die die Reise maximal dauern darf.
+Diese Konstante wird an allen relevanten Stellen respektiert, weshalb leicht eine Berechnung fuer mehr (oder weniger) als fuenf Tagen durchgefuehrt werden kann.
 
 Nun kann mit der Funktion \lstinline{populate_tables} diese Tabellen der Loesungsidee nach fuellen.
 \begin{lstlisting}[language=C++]
@@ -218,5 +220,163 @@ Zum Schluss werden die beiden Tabellen und der finale, optimale Weg ausgegeben.
 
 \section{Beispiele}
 % Genügend Beispiele einbinden! Die Beispiele von der BwInf-Webseite sollten hier diskutiert werden, aber auch eigene Beispiele sind sehr gut – besonders wenn sie Spezialfälle abdecken. Aber bitte nicht 30 Seiten Programmausgabe hier einfügen!
+Das Pythonscript \lstinline{tabs.py} wird benutzt, um tabs korrekt zu formatieren.
+Die \lstinline{+} Zeichen zeigen, dass dieses Hotel im optimalen Weg enthalten ist.
+
+\subsection*{Hotels 1}
+\begin{lstlisting}
+./tabs.py <(cat examples/hotels1.txt | ./a.out)
+                          min rating at day:
+idx     distance rating   0     1       2       3       4       5       6
+===     ======== ======   =     =       =       =       =       =       =
+0       0        inf      inf
+1       12       4.3            4.3
+2       326      4.8    +       4.8     4.3
+3       347      2.7            2.7     2.7     2.7
+4       359      2.6            2.6     2.6     2.6     2.6
+5       553      3.6    +               3.6     3.6     2.7     2.6
+6       590      0.8                    0.8     0.8     0.8     0.8     0.8
+7       687      4.4    +               2.7     3.6     3.6     2.7     2.6
+8       1007     2.8    +                       2.7     2.8     2.8     2.7
+9       1008     2.6                            2.6     2.6     2.6     2.6
+10      1321     2.1                                    2.1     2.1     2.1
+11      1360     2.8    +                               2.7     2.8     2.8
+12      1411     3.3                                            2.7     2.8
+13      1680     inf                                            2.7     2.8
+
+These hotels should be used with min rating 2.8:
+idx     location        rating  min rating till here
+===     ========        ======  ====================
+2       326             4.8     4.8
+5       553             3.6     3.6
+7       687             4.4     3.6
+8       1007            2.8     2.8
+11      1360            2.8     2.8
+\end{lstlisting}
+
+\subsection*{Hotels 2}
+\begin{lstlisting}
+./tabs.py <(cat examples/hotels2.txt | ./a.out)
+                          min rating at day:
+idx     distance rating   0     1       2       3       4       5       6
+===     ======== ======   =     =       =       =       =       =       =
+0       0        inf      inf
+1       340      1.6            1.6
+2       341      2.2            2.2     1.6
+3       341      2.3    +       2.3     2.2     1.6
+4       342      2.1            2.1     2.1     2.1     1.6
+5       360      1.9            1.9     1.9     1.9     1.9     1.6
+6       361      4.4                    2.3     2.2     2.1     1.9     1.6
+7       362      3.1                    2.3     2.3     2.2     2.1     1.9
+8       442      5                      2.3     2.3     2.3     2.2     2.1
+9       567      4.9                    2.3     2.3     2.3     2.3     2.2
+10      700      3      +               2.3     2.3     2.3     2.3     2.3
+11      710      2.9                    1.9     2.3     2.3     2.3     2.3
+12      718      1.4                    1.4     1.4     1.4     1.4     1.4
+13      987      4.6                            2.3     2.3     2.3     2.3
+14      1051     2.3    +                       2.3     2.3     2.3     2.3
+15      1053     4.8                            2.3     2.3     2.3     2.3
+16      1057     0.2                            0.2     0.2     0.2     0.2
+17      1199     5                                      2.3     2.3     2.3
+18      1279     5                                      2.3     2.3     2.3
+19      1367     4.5                                    2.3     2.3     2.3
+20      1377     1.8                                    1.8     1.8     1.8
+21      1377     1.6                                    1.6     1.6     1.6
+22      1377     2                                      2       2       2
+23      1378     2.1                                    2.1     2.1     2.1
+24      1378     2.2                                    2.2     2.2     2.2
+25      1380     5      +                               2.3     2.3     2.3
+26      1737     inf                                            2.3     2.3
+
+These hotels should be used with min rating 2.3:
+idx     location        rating  min rating till here
+===     ========        ======  ====================
+3       341             2.3     2.3
+10      700             3       2.3
+14      1051            2.3     2.3
+25      1380            5       2.3
+\end{lstlisting}
+
+\subsection*{Hotels 3}
+\begin{lstlisting}
+./tabs.py <(cat examples/hotels3.txt | ./a.out)
+these hotels should be used with min rating 0.3:
+idx     location        rating  min rating till here
+===     ========        ======  ====================
+97      358             2.5     2.5
+196     717             0.3     0.3
+297     1075            0.8     0.3
+401     1433            1.7     0.3
+\end{lstlisting}
+Aufgrund von 500 Hotels wird fuer dieses Beispiel die Minimumstabelle nicht abgedruckt.
+
+\subsection*{Hotels 5}
+\begin{lstlisting}
+./tabs.py <(cat examples/hotels5.txt | ./a.out)
+These hotels should be used with min rating 5:
+idx     location        rating  min rating till here
+===     ========        ======  ====================
+242     280             5       5
+581     636             5       5
+913     987             5       5
+1168    1271            5       5
+\end{lstlisting}
+Hier wird die Minimumstabelle ebenfalls weggelassen.
+
+\subsection*{Unmoegliches Beispiel}
+\begin{lstlisting}
+./tabs.py <(cat examples/my_hotels0.txt | ./a.out)
+                          min rating at day:
+idx     distance rating   0     1       2       3       4       5       6
+===     ======== ======   =     =       =       =       =       =       =
+0       0        inf      inf
+1       1680     inf
+
+It is impossible to reach the destination in 6 days without draining the phones' batteries.
+Maybe read a book instead.
+\end{lstlisting}
+Dieses Beispiel enthaelt kein einziges Hotel, weshalb die gesamte Fahrzeit von 1680 Minuten nicht ohne geladene Smartphones ueberstanden werden kann.
+
+\subsection*{Moegliches Beispiel nach sechs Tagen}
+\begin{lstlisting}
+./tabs.py <(cat examples/my_hotels1.txt | ./a.out)
+                          min rating at day:
+idx     distance rating   0     1       2       3       4       5
+===     ======== ======   =     =       =       =       =       =
+0       0        inf      inf
+1       300      5              5
+2       600      5                      5
+3       900      5                              5
+4       1200     5                                      5
+5       1500     5                                              5
+6       1800     inf
+
+It is impossible to reach the destination in 5 days without draining the phones' batteries.
+Maybe read a book instead.
+\end{lstlisting}
+Es zeigt sich, dass die Hotels geradeso nicht ausreichen, um das Ziel innerhalb von fuenf Tagen zu erreichen.
+Wenn allerdings die Konstante \lstinline{DAYS} auf $6$ gesetzt wird, ist das Beispiel loesbar:
+\begin{lstlisting}
+./tabs.py <(cat examples/my_hotels1.txt | ./a.out)
+                          min rating at day:
+idx     distance rating   0     1       2       3       4       5       6
+===     ======== ======   =     =       =       =       =       =       =
+0       0        inf      inf
+1       300      5      +       5
+2       600      5      +               5
+3       900      5      +                       5
+4       1200     5      +                               5
+5       1500     5      +                                       5
+6       1800     inf                                                    5
+
+These hotels should be used with min rating 5:
+idx     location        rating  min rating till here
+===     ========        ======  ====================
+1       300             5       5
+2       600             5       5
+3       900             5       5
+4       1200            5       5
+5       1500            5       5
+\end{lstlisting}
 
 \end{document}

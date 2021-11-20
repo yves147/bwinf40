@@ -5,7 +5,7 @@
 
 #define inf std::numeric_limits<float>::max() / 2
 
-constexpr int DAYS    = 5;
+constexpr int DAYS    = 6;
 constexpr int DAY_LEN = 6 * 60;
 
 void populate_tables(
@@ -95,12 +95,21 @@ int main()
     if(best_day != -1)
         construct_path(last_hotel, best_day, n, path);
 
-    // print table
-    std::cout << "   \t      \t  min rating at day:" << std::endl;
-    std::cout << "idx\trating\t  0\t1\t2\t3\t4\t5" << std::endl;
-    std::cout << "===\t======\t  =\t=\t=\t=\t=\t=" << std::endl;
+    // print table header
+    std::cout << "   \t               \t  min rating at day:" << std::endl;
+    std::cout << "idx\tdistance rating\t  ";
+    for(int i = 0; i <= DAYS; ++i)
+        std::cout << i << "\t";
+    std::cout << std::endl;
+    std::cout << "===\t======== ======\t  ";
+    for(int i = 0; i <= DAYS; ++i)
+        std::cout << "=\t";
+    std::cout << std::endl;
+
+    // print table body
     for(int hotel_id = 0; hotel_id < n + 2; ++hotel_id) {
         std::cout << hotel_id << "\t";
+        std::cout << hotels[hotel_id].first << "\t ";
         if(hotels[hotel_id].second == inf)
             std::cout << "inf\t";
         else
@@ -121,15 +130,16 @@ int main()
     }
     std::cout << std::endl;
 
-    // print path
     if(best_day == -1) {
-        std::cout << "impossible" << std::endl;
+        std::cout << "It is impossible to reach the destination in " << DAYS << " days without draining the phones' batteries." << std::endl;
+        std::cout << "Maybe read a book instead." << std::endl;
     }
     else {
-        std::cout << "these hotels should be used with min rating " << min_ratings[n + 1][best_day] << ":" << std::endl;
+        // print path
+        std::cout << "These hotels should be used with min rating " << min_ratings[n + 1][best_day] << ":" << std::endl;
         std::cout << "idx\tlocation\trating\tmin rating till here" << std::endl;
         std::cout << "===\t========\t======\t====================" << std::endl;
-        for(int day = 1; day < DAYS; ++day) {
+        for(int day = 1; day < DAYS && day - 1 < path.size(); ++day) {
             int idx = path[day - 1];
             std::cout << idx << "\t" << hotels[idx].first << "\t\t" << hotels[idx].second << "\t" << min_ratings[idx][day] << std::endl;
         }
