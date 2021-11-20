@@ -1,0 +1,382 @@
+\documentclass[a4paper,10pt,ngerman]{scrartcl}
+\usepackage{babel}
+\usepackage[T1]{fontenc}
+\usepackage[utf8x]{inputenc}
+\usepackage[a4paper,margin=2.5cm,footskip=0.5cm]{geometry}
+
+% Die nächsten vier Felder bitte anpassen:
+\newcommand{\Aufgabe}{Aufgabe 1: Schiebeparkplatz} % Aufgabennummer und Aufgabennamen angeben
+\newcommand{\TeamId}{00067}                       % Team-ID aus dem PMS angeben
+\newcommand{\TeamName}{Panic! at the Kernel}                 % Team-Namen angeben
+\newcommand{\Namen}{Christopher Besch}           % Namen der Bearbeiter/-innen dieser Aufgabe angeben
+ 
+% Kopf- und Fußzeilen
+\usepackage{scrlayer-scrpage, lastpage}
+\setkomafont{pageheadfoot}{\large\textrm}
+\lohead{\Aufgabe}
+\rohead{Team-ID: \TeamId}
+\cfoot*{\thepage{}/\pageref{LastPage}}
+
+% Position des Titels
+\usepackage{titling}
+\setlength{\droptitle}{-1.0cm}
+
+% Für mathematische Befehle und Symbole
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+% Für Bilder
+\usepackage{graphicx}
+
+% Für Algorithmen
+\usepackage{algpseudocode}
+
+% Für Quelltext
+\usepackage{listings}
+\usepackage{color}
+\definecolor{mygreen}{rgb}{0,0.6,0}
+\definecolor{mygray}{rgb}{0.5,0.5,0.5}
+\definecolor{mymauve}{rgb}{0.58,0,0.82}
+\lstset{
+  keywordstyle=\color{blue},commentstyle=\color{mygreen},
+  stringstyle=\color{mymauve},rulecolor=\color{black},
+  basicstyle=\footnotesize\ttfamily,numberstyle=\tiny\color{mygray},
+  captionpos=b, % sets the caption-position to bottom
+  keepspaces=true, % keeps spaces in text
+  numbers=left, numbersep=5pt, showspaces=false,showstringspaces=true,
+  showtabs=false, stepnumber=2, tabsize=2, title=\lstname
+}
+\lstdefinelanguage{JavaScript}{ % JavaScript ist als einzige Sprache noch nicht vordefiniert
+  keywords={break, case, catch, continue, debugger, default, delete, do, else, finally, for, function, if, in, instanceof, new, return, switch, this, throw, try, typeof, var, void, while, with},
+  morecomment=[l]{//},
+  morecomment=[s]{/*}{*/},
+  morestring=[b]',
+  morestring=[b]",
+  sensitive=true
+}
+
+% Diese beiden Pakete müssen zuletzt geladen werden
+\usepackage{hyperref} % Anklickbare Links im Dokument
+\usepackage{cleveref}
+\usepackage[shortlabels]{enumitem}
+
+% Daten für die Titelseite
+\title{\textbf{\Huge\Aufgabe}}
+\author{\LARGE Team-ID: \LARGE \TeamId \\\\
+	    \LARGE Team-Name: \LARGE \TeamName \\\\
+	    \LARGE Bearbeiter/-innen dieser Aufgabe: \\ 
+	    \LARGE \Namen\\\\}
+\date{\LARGE\today}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+\vspace{0.5cm}
+
+\section{Lösungsidee}
+% Die Idee der Lösung sollte hieraus vollkommen ersichtlich werden, ohne dass auf die eigentliche Implementierung Bezug genommen wird.
+Fuer jedes Hotel laesst sich sagen, ob es innerhalb von $d$ Tagen erreicht werden kann.
+Ist dies fuer ein $d$ der Fall, kann fuer die minimale Bewertung aller auf dem optimalen Weg zu ihm liegenden Hotels angegeben werden.
+Dieser optimale Weg benoetigt genau $d$ Tage.
+Zudem ist er in dem Sinne optimal, dass kein anderer Weg existiert, der in $d$ Tagen das Hotel erreicht und eine besserer minimale Bewertung aufweist.
+Diese Werte koennen in einer Tabelle---der Minimumstabelle---dargestellt werden:
+\begin{lstlisting}
+                  min rating at day:
+idx     rating    0     1       2       3       4       5
+===     ======    =     =       =       =       =       =
+0       inf       inf
+1       4.3             4.3
+2       4.8             4.8     4.3
+3       2.7             2.7     2.7     2.7
+4       2.6             2.6     2.6     2.6     2.6
+5       3.6                     3.6     3.6     2.7     2.6
+6       0.8                     0.8     0.8     0.8     0.8
+7       4.4                     2.7     3.6     3.6     2.7
+8       2.8                             2.7     2.8     2.8
+9       2.6                             2.6     2.6     2.6
+10      2.1                                     2.1     2.1
+11      2.8                                     2.7     2.8
+12      3.3                                             2.7
+13      inf                                             2.7
+\end{lstlisting}
+Neben den Hotels werde hier mit dem Index $0$ der Startort und mit $13$ das Ziel gelistet.
+Dessen Bewertung ist nie schlechter als die eines beliebigen Hotels, weshalb sie als unendlich angesehen wird.
+Da eine Fahrt, die laenger als fuenf Tage dauert nicht zulaessig ist, werden diese Optionen weggelassen.
+
+Anhand dieser Daten laesst sich recht leicht die minimale Bewertung auf dem Weg zu jedem beliebigen Hotel ausgeben.
+Interessant ist dieser Wert fuer das Ziel.
+Es muss lediglich das Minimum aller Werte in der letzten Zeile bestimmt werden.
+
+Um nun die einzelnen Hotels, die optimal zum Ziel fuehren, zu bestimmen, wird eine zweite Tabelle---die Vorgaengertabelle---benoetigt.
+Diese weist die gleichen Dimensionen auf, gibt allerdings fuer jedes Hotel $x$ und Tag $d$ das Hotel, das am vorherigen Tag zuletzt besucht wurde, an.
+So kann vom Ziel am optimalen Tag ausgehend immer das zuletzt besuchte Hotel bestimmt werden.
+Dieser Vorgang endet, wenn man am Anfang angekommen ist.
+
+\subsection{Berechnung der Tabellen}
+Als Taglaenge wird die Strecke verstanden, die an einem Tag zurueckgelegt werden kann.
+Zu jedem Hotel $x$ kann man am Tag $d$ von allen Hotels, die maximal eine Taglaenge vor $a$ liegt und innerhalb von genau $d-1$ Tagen erreichbar sind, gelangen.
+Diese Hotels bilden die Menge $Y$.
+Alle Hotels, die hinter $x$ liegen, sind nicht zu verwenden.
+Die minimale $a$ Bewertung zum Hotel $x$ nach $d$ Tagen entspricht mit
+\begin{itemize}
+    \item dem Minimum $b$ der Werte aus der Minimumstabelle fuer aller Hotels aus $Y$ und den Tag $d-1$ und
+    \item der Bewertung des Hotels $x$:
+\end{itemize}
+\begin{equation*}
+    a = b + c
+\end{equation*}
+$a$ wird in der Minimumstabelle gespeichert.
+Der entsprechende Wert in der Vorgaengertabelle entspricht dem Index des Hotels dessen
+
+Da so immer nur die Information von Hotels, die vor dem aktuellen liegen, benoetigt werden, kann das Prinzip der dynamischen Programmierung verwendet werden.
+Hierbei werden die Tabellen anfangend beim \glqq{}Start\grqq{} Hotel fuer Hotel gefuellt.
+Jedes weitere Hotel benoetigt ausschliesslich die bereits berechnete Information.
+
+\section{Umsetzung und Quellcode}
+% Hier wird kurz erläutert, wie die Lösungsidee im Programm tatsächlich umgesetzt wurde. Hier können auch Implementierungsdetails erwähnt werden.
+Die Loesungsidee wird in C++ implementiert.
+Zur Repraesentation der Tabellen werden mehrdimensionale vectors benutzt:
+\begin{lstlisting}[language=C++]
+// min_ratings[x][y] -> min rating till hotel x requiring y days to get to
+// -1 -> impossible
+std::vector<std::vector<float>> min_ratings(n + 2, std::vector<float>(DAYS + 1, -1));
+std::vector<std::vector<int>>   last_hotel(n + 2, std::vector<int>(DAYS + 1, -1));
+\end{lstlisting}
+\lstinline{DAYS} entspricht der Anzahl an Tagen, die die Reise maximal dauern darf.
+Diese Konstante wird an allen relevanten Stellen respektiert, weshalb leicht eine Berechnung fuer mehr (oder weniger) als fuenf Tagen durchgefuehrt werden kann.
+
+Nun kann mit der Funktion \lstinline{populate_tables} diese Tabellen der Loesungsidee nach fuellen.
+\begin{lstlisting}[language=C++]
+void populate_tables(
+    const std::vector<std::pair<int, float>>& hotels,
+    std::vector<std::vector<float>>&          min_ratings,
+    std::vector<std::vector<int>>&            last_hotel)
+{
+    // the "first" (virtual) hotel never has the worst rating
+    min_ratings[0][0] = inf;
+    // go through all but "first" hotels
+    for(auto cur = hotels.begin() + 1; cur != hotels.end(); ++cur) {
+        int cur_idx = cur - hotels.begin();
+        // first hotel `cur` can be reached from
+        auto prev = std::lower_bound(hotels.begin(), hotels.end(),
+                                     std::make_pair(cur->first - DAY_LEN, .0f));
+        for(; prev != cur; ++prev) {
+            int prev_idx = prev - hotels.begin();
+            // go through past days when prev can be reached
+            // call ride off after `DAYS` days
+            for(int prev_day = 0, cur_day = 1; prev_day < DAYS; ++prev_day, ++cur_day) {
+                // if the hotel `prev` can't be reached in `prev_day` days
+                if(min_ratings[prev_idx][prev_day] == -1)
+                    continue;
+                float new_min = std::min(min_ratings[prev_idx][prev_day], cur->second);
+                // update when better
+                if(new_min > min_ratings[cur_idx][cur_day]) {
+                    min_ratings[cur_idx][cur_day] = new_min;
+                    last_hotel[cur_idx][cur_day]  = prev_idx;
+                }
+            }
+        }
+    }
+}
+\end{lstlisting}
+
+Wenn die Tabellen produziert wurde, koennen mit \lstinline{get_best_day} die Wert des \glqq{}Zielhotel\grqq{} in der Minimumstabelle linear nach dem Optimum durchsucht werden:
+\begin{lstlisting}[language=C++]
+int get_best_day(const std::vector<std::vector<float>>& min_ratings, int n)
+{
+    int   best_day {-1};
+    float best_min_rating {-1};
+    for(int i = 0; i < DAYS + 1; ++i) {
+        if(min_ratings[n + 1][i] > best_min_rating) {
+            best_min_rating = min_ratings[n + 1][i];
+            best_day        = i;
+        }
+    }
+    return best_day;
+}
+\end{lstlisting}
+
+Wurde festgestellt, dass es einen Weg zum \glqq{}Zielhotel\grqq{} innerhalb von fuenf Tagen gibt, kann der optimale Weg mithilfe der Funktion \lstinline{construct_path} bestimmt werden:
+\begin{lstlisting}[language=C++]
+void construct_path(
+    const std::vector<std::vector<int>>& last_hotel,
+    int                                  best_day,
+    int                                  n,
+    std::vector<int>&                    path)
+{
+    int cur_idx = last_hotel[n + 1][best_day];
+    for(int cur_day = best_day - 1; cur_day; --cur_day) {
+        path.push_back(cur_idx);
+        cur_idx = last_hotel[cur_idx][cur_day];
+    }
+    std::reverse(path.begin(), path.end());
+}
+\end{lstlisting}
+Hierbei wird \lstinline{cur_idx} immer so aktualisiert, dass immer das jeweilig vorhergehende Hotel referenziert wird.
+
+Zum Schluss werden die beiden Tabellen und der finale, optimale Weg ausgegeben.
+
+\section{Beispiele}
+% Genügend Beispiele einbinden! Die Beispiele von der BwInf-Webseite sollten hier diskutiert werden, aber auch eigene Beispiele sind sehr gut – besonders wenn sie Spezialfälle abdecken. Aber bitte nicht 30 Seiten Programmausgabe hier einfügen!
+Das Pythonscript \lstinline{tabs.py} wird benutzt, um tabs korrekt zu formatieren.
+Die \lstinline{+} Zeichen zeigen, dass dieses Hotel im optimalen Weg enthalten ist.
+
+\subsection*{Hotels 1}
+\begin{lstlisting}
+./tabs.py <(cat examples/hotels1.txt | ./a.out)
+                          min rating at day:
+idx     distance rating   0     1       2       3       4       5       6
+===     ======== ======   =     =       =       =       =       =       =
+0       0        inf      inf
+1       12       4.3            4.3
+2       326      4.8    +       4.8     4.3
+3       347      2.7            2.7     2.7     2.7
+4       359      2.6            2.6     2.6     2.6     2.6
+5       553      3.6    +               3.6     3.6     2.7     2.6
+6       590      0.8                    0.8     0.8     0.8     0.8     0.8
+7       687      4.4    +               2.7     3.6     3.6     2.7     2.6
+8       1007     2.8    +                       2.7     2.8     2.8     2.7
+9       1008     2.6                            2.6     2.6     2.6     2.6
+10      1321     2.1                                    2.1     2.1     2.1
+11      1360     2.8    +                               2.7     2.8     2.8
+12      1411     3.3                                            2.7     2.8
+13      1680     inf                                            2.7     2.8
+
+These hotels should be used with min rating 2.8:
+idx     location        rating  min rating till here
+===     ========        ======  ====================
+2       326             4.8     4.8
+5       553             3.6     3.6
+7       687             4.4     3.6
+8       1007            2.8     2.8
+11      1360            2.8     2.8
+\end{lstlisting}
+
+\subsection*{Hotels 2}
+\begin{lstlisting}
+./tabs.py <(cat examples/hotels2.txt | ./a.out)
+                          min rating at day:
+idx     distance rating   0     1       2       3       4       5       6
+===     ======== ======   =     =       =       =       =       =       =
+0       0        inf      inf
+1       340      1.6            1.6
+2       341      2.2            2.2     1.6
+3       341      2.3    +       2.3     2.2     1.6
+4       342      2.1            2.1     2.1     2.1     1.6
+5       360      1.9            1.9     1.9     1.9     1.9     1.6
+6       361      4.4                    2.3     2.2     2.1     1.9     1.6
+7       362      3.1                    2.3     2.3     2.2     2.1     1.9
+8       442      5                      2.3     2.3     2.3     2.2     2.1
+9       567      4.9                    2.3     2.3     2.3     2.3     2.2
+10      700      3      +               2.3     2.3     2.3     2.3     2.3
+11      710      2.9                    1.9     2.3     2.3     2.3     2.3
+12      718      1.4                    1.4     1.4     1.4     1.4     1.4
+13      987      4.6                            2.3     2.3     2.3     2.3
+14      1051     2.3    +                       2.3     2.3     2.3     2.3
+15      1053     4.8                            2.3     2.3     2.3     2.3
+16      1057     0.2                            0.2     0.2     0.2     0.2
+17      1199     5                                      2.3     2.3     2.3
+18      1279     5                                      2.3     2.3     2.3
+19      1367     4.5                                    2.3     2.3     2.3
+20      1377     1.8                                    1.8     1.8     1.8
+21      1377     1.6                                    1.6     1.6     1.6
+22      1377     2                                      2       2       2
+23      1378     2.1                                    2.1     2.1     2.1
+24      1378     2.2                                    2.2     2.2     2.2
+25      1380     5      +                               2.3     2.3     2.3
+26      1737     inf                                            2.3     2.3
+
+These hotels should be used with min rating 2.3:
+idx     location        rating  min rating till here
+===     ========        ======  ====================
+3       341             2.3     2.3
+10      700             3       2.3
+14      1051            2.3     2.3
+25      1380            5       2.3
+\end{lstlisting}
+
+\subsection*{Hotels 3}
+\begin{lstlisting}
+./tabs.py <(cat examples/hotels3.txt | ./a.out)
+these hotels should be used with min rating 0.3:
+idx     location        rating  min rating till here
+===     ========        ======  ====================
+97      358             2.5     2.5
+196     717             0.3     0.3
+297     1075            0.8     0.3
+401     1433            1.7     0.3
+\end{lstlisting}
+Aufgrund von 500 Hotels wird fuer dieses Beispiel die Minimumstabelle nicht abgedruckt.
+
+\subsection*{Hotels 5}
+\begin{lstlisting}
+./tabs.py <(cat examples/hotels5.txt | ./a.out)
+These hotels should be used with min rating 5:
+idx     location        rating  min rating till here
+===     ========        ======  ====================
+242     280             5       5
+581     636             5       5
+913     987             5       5
+1168    1271            5       5
+\end{lstlisting}
+Hier wird die Minimumstabelle ebenfalls weggelassen.
+
+\subsection*{Unmoegliches Beispiel}
+\begin{lstlisting}
+./tabs.py <(cat examples/my_hotels0.txt | ./a.out)
+                          min rating at day:
+idx     distance rating   0     1       2       3       4       5       6
+===     ======== ======   =     =       =       =       =       =       =
+0       0        inf      inf
+1       1680     inf
+
+It is impossible to reach the destination in 6 days without draining the phones' batteries.
+Maybe read a book instead.
+\end{lstlisting}
+Dieses Beispiel enthaelt kein einziges Hotel, weshalb die gesamte Fahrzeit von 1680 Minuten nicht ohne geladene Smartphones ueberstanden werden kann.
+
+\subsection*{Moegliches Beispiel nach sechs Tagen}
+\begin{lstlisting}
+./tabs.py <(cat examples/my_hotels1.txt | ./a.out)
+                          min rating at day:
+idx     distance rating   0     1       2       3       4       5
+===     ======== ======   =     =       =       =       =       =
+0       0        inf      inf
+1       300      5              5
+2       600      5                      5
+3       900      5                              5
+4       1200     5                                      5
+5       1500     5                                              5
+6       1800     inf
+
+It is impossible to reach the destination in 5 days without draining the phones' batteries.
+Maybe read a book instead.
+\end{lstlisting}
+Es zeigt sich, dass die Hotels geradeso nicht ausreichen, um das Ziel innerhalb von fuenf Tagen zu erreichen.
+Wenn allerdings die Konstante \lstinline{DAYS} auf $6$ gesetzt wird, ist das Beispiel loesbar:
+\begin{lstlisting}
+./tabs.py <(cat examples/my_hotels1.txt | ./a.out)
+                          min rating at day:
+idx     distance rating   0     1       2       3       4       5       6
+===     ======== ======   =     =       =       =       =       =       =
+0       0        inf      inf
+1       300      5      +       5
+2       600      5      +               5
+3       900      5      +                       5
+4       1200     5      +                               5
+5       1500     5      +                                       5
+6       1800     inf                                                    5
+
+These hotels should be used with min rating 5:
+idx     location        rating  min rating till here
+===     ========        ======  ====================
+1       300             5       5
+2       600             5       5
+3       900             5       5
+4       1200            5       5
+5       1500            5       5
+\end{lstlisting}
+
+\end{document}

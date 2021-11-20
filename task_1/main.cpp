@@ -1,11 +1,22 @@
 #include <algorithm>
 #include <iostream>
+#include <sstream>
 #include <vector>
 
 void print_shifts(const std::vector<int>& move_possible, const std::vector<std::vector<int>>& shift, int cars_amount, char first_car)
 {
+    // print heading
+    std::cout << "name possible moves shifts" << std::endl;
+    std::cout << "==== ============== ======" << std::endl;
+    std::cout << "                    ";
+    for(int i = 0; i < cars_amount; ++i)
+        std::cout << static_cast<char>(first_car + i) << " ";
+    std::cout << std::endl;
+    std::cout << std::endl;
+
+    // print table
     for(int i = 0; i < cars_amount; ++i) {
-        std::cout << static_cast<char>(first_car + i) << "\t" << move_possible[i] << ":\t";
+        std::cout << static_cast<char>(first_car + i) << "    " << move_possible[i] << "              ";
         for(int y = 0; y < cars_amount; ++y) {
             std::cout << shift[i][y] << " ";
         }
@@ -16,19 +27,22 @@ void print_shifts(const std::vector<int>& move_possible, const std::vector<std::
 // merge source into target
 void update_row_dir(const std::vector<int>& source, std::vector<int>& target)
 {
-    for(int i = 0; i < target.size(); ++i) {
+    for(int i = 0; i < target.size(); ++i)
         target[i] = std::max(target[i], source[i]);
-    }
 }
 // merge reduced source into target
 void update_row_red(const std::vector<int>& source, std::vector<int>& target)
 {
-    for(int i = 0; i < target.size(); ++i) {
+    for(int i = 0; i < target.size(); ++i)
         target[i] = std::max(target[i], source[i] - 1);
-    }
 }
 
-void load_possible_moves(const std::vector<std::pair<int, char>>& cross_cars, int cars_amount, std::vector<std::vector<int>>& shift, std::vector<int>& move_possible, bool go_left)
+void load_possible_moves(
+    const std::vector<std::pair<int, char>>& cross_cars,
+    int                                      cars_amount,
+    std::vector<std::vector<int>>&           shift,
+    std::vector<int>&                        move_possible,
+    bool                                     go_left)
 {
     int start = go_left ? 0 : cross_cars.size() - 1;
     int end   = go_left ? cross_cars.size() : -1;
@@ -133,6 +147,7 @@ bool get_required_shifts(int moves_possible, std::vector<int>& shift, bool is_fi
     return false;
 }
 
+// which shift moves fewer cross cars?
 bool better_shift(const std::vector<int>& a, const std::vector<int>& b)
 {
     int count_a {0}, count_b {0};
@@ -203,12 +218,14 @@ int main()
     load_possible_moves(cross_cars, cars_amount, right_shift, move_right_possible, false);
 
 #if 1
-    std::cout << std::endl;
-    std::cout << "left:" << std::endl;
+    std::cout << "## LEFT" << std::endl;
     print_shifts(move_left_possible, left_shift, cars_amount, first_car);
     std::cout << std::endl;
-    std::cout << "right:" << std::endl;
+    std::cout << std::endl;
+    std::cout << "## RIGHT" << std::endl;
     print_shifts(move_right_possible, right_shift, cars_amount, first_car);
+    std::cout << std::endl;
+    std::cout << std::endl;
 #endif
 
     // use produced tables
@@ -220,37 +237,39 @@ int main()
         std::vector<int> right_shift_req(cars_amount);
         bool             right_ok = get_required_shifts(move_right_possible[i], right_shift[i], !cross_car_lookup[i].second, right_shift_req);
 
-        // std::cout << std::endl;
-        // for(auto e: left_shift_req) {
-        //     std::cout << e << " ";
-        // }
-        // std::cout << std::endl;
-        // for(auto e: right_shift_req) {
-        //     std::cout << e << " ";
-        // }
-        // std::cout << std::endl;
-
         std::cout << static_cast<char>(first_car + i) << ": ";
+        std::vector<std::string> out;
         // select better move
         // either left is better than right or right is impossible
         if(left_ok && (better_shift(left_shift_req, right_shift_req) || !right_ok)) {
             for(int x = 0; x < left_shift_req.size(); ++x)
                 if(left_shift_req[x]) {
-                    std::cout << cross_car_lookup[x].first << " " << left_shift_req[x] << " links, ";
+                    std::stringstream ss;
+                    ss << cross_car_lookup[x].first << " " << left_shift_req[x] << " links";
+                    out.push_back(ss.str());
                     // move to pace after current car
                     ++x;
                 }
         }
         else if(right_ok) {
             // go the other way around <- now moving right
-            for(int x = right_shift_req.size() - 1; x; --x)
+            for(int x = right_shift_req.size() - 1; x > 0; --x)
                 if(right_shift_req[x]) {
-                    std::cout << cross_car_lookup[x].first << " " << right_shift_req[x] << " rechts, ";
+                    std::stringstream ss;
+                    ss << cross_car_lookup[x].first << " " << right_shift_req[x] << " rechts";
+                    out.push_back(ss.str());
                     --x;
                 }
         }
-        else
-            std::cout << "unmoeglich";
+        else {
+            std::cout << "unmoeglich" << std::endl;
+            continue;
+        }
+        for(int i = 0; i < out.size(); ++i) {
+            std::cout << out[i];
+            if(i < out.size() - 1)
+                std::cout << ", ";
+        }
         std::cout << std::endl;
     }
 }
