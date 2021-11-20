@@ -1,0 +1,117 @@
+\documentclass[a4paper,10pt,ngerman]{scrartcl}
+\usepackage{babel}
+\usepackage[T1]{fontenc}
+\usepackage[utf8x]{inputenc}
+\usepackage[a4paper,margin=2.5cm,footskip=0.5cm]{geometry}
+
+% Die nächsten vier Felder bitte anpassen:
+\newcommand{\Aufgabe}{Aufgabe 3: Wortsuche} % Aufgabennummer und Aufgabennamen angeben
+\newcommand{\TeamId}{00067}                       % Team-ID aus dem PMS angeben
+\newcommand{\TeamName}{Panic! at the Kernel}                 % Team-Namen angeben
+\newcommand{\Namen}{Yves Léon Jansen}           % Namen der Bearbeiter/-innen dieser Aufgabe angeben
+ 
+% Kopf- und Fußzeilen
+\usepackage{scrlayer-scrpage, lastpage}
+\setkomafont{pageheadfoot}{\large\textrm}
+\lohead{\Aufgabe}
+\rohead{Team-ID: \TeamId}
+\cfoot*{\thepage{}/\pageref{LastPage}}
+
+% Position des Titels
+\usepackage{titling}
+\setlength{\droptitle}{-1.0cm}
+
+% Für mathematische Befehle und Symbole
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+% Für Bilder
+\usepackage{graphicx}
+
+% Für Quelltext
+\usepackage{listings}
+\usepackage{color}
+\definecolor{mygreen}{rgb}{0,0.6,0}
+\definecolor{mygray}{rgb}{0.5,0.5,0.5}
+\definecolor{mymauve}{rgb}{0.58,0,0.82}
+\lstset{
+  keywordstyle=\color{blue},commentstyle=\color{mygreen},
+  stringstyle=\color{mymauve},rulecolor=\color{black},
+  basicstyle=\footnotesize\ttfamily,numberstyle=\tiny\color{mygray},
+  captionpos=b, % sets the caption-position to bottom
+  keepspaces=true, % keeps spaces in text
+  numbers=left, numbersep=5pt, showspaces=false,showstringspaces=true,
+  showtabs=false, stepnumber=2, tabsize=2, title=\lstname
+}
+\lstdefinelanguage{JavaScript}{ % JavaScript ist als einzige Sprache noch nicht vordefiniert
+  keywords={break, case, catch, continue, debugger, default, delete, do, else, finally, for, function, if, in, instanceof, new, return, switch, this, throw, try, typeof, var, void, while, with},
+  morecomment=[l]{//},
+  morecomment=[s]{/*}{*/},
+  morestring=[b]',
+  morestring=[b]",
+  sensitive=true
+}
+
+% Diese beiden Pakete müssen zuletzt geladen werden
+\usepackage{hyperref} % Anklickbare Links im Dokument
+\usepackage{cleveref}
+\usepackage[shortlabels]{enumitem}
+
+% Daten für die Titelseite
+\title{\textbf{\Huge\Aufgabe}}
+\author{\LARGE Team-ID: \LARGE \TeamId \\\\
+	    \LARGE Team-Name: \LARGE \TeamName \\\\
+	    \LARGE Bearbeiter/-innen dieser Aufgabe: \\ 
+	    \LARGE \Namen\\\\}
+\date{\LARGE\today}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+\vspace{0.5cm}
+
+\section{Lösungsidee}
+% Die Idee der Lösung sollte hieraus vollkommen ersichtlich werden, ohne dass auf die eigentliche Implementierung Bezug genommen wird.
+\subsection{Schwierigkeiten}
+Das Programm kann Lösungen in drei Schwierigkeiten generieren.
+Für den Menschen ist es am einfachsten in Richtung links-nach-rechts und oben-nach-unten zu lesen.
+Daher generiert die erste Stufe lediglich Wörter in diese Richtungen in das Rätsel.\\\\
+Schwieriger wird es dann, wenn auch schräg-geschriebene Wörter möglich sind. Zudem werden in der
+zweiten Schwierigkeitsstufe Teile der Wörter in das Rätsel eingefügt, um für Verwirrung zu sorgen.\\\\
+Als letzte Schwierigkeit können Wörter nun in alle Richtungen geschrieben sein. Dazu werden
+die Buchstaben auch zufällig groß und klein geschrieben. Das macht das Rätsel nochmal unübersichtlicher. 
+\subsection{Idee}
+Das Hauptproblem bei dieser Aufgabe ist es, die Wörter so nebenbeinander und übereinander anzuordnen, dass
+Sie alle in die verfügbaren Zellen des Rätsels passen. Unser Ansatz geht nach folgenden Schritten vor:
+\begin{enumerate}
+	\item Suche einen zufälligen Punkt (x,y) aus, der noch nicht von anderen Buchstaben besetzt ist.
+	\item Schaue, ob von diesen in eine zufällige Richtung ein gewisses Wort eingesetzt werden kann.
+	\item Falls ja, setze es ein. Sonst, versuche es erneut.
+\end{enumerate}
+Die oberen Punkte können jedoch nicht immer zu einer Lösung führen, da gewisse Kombinationen an schon
+gesetzten Wörtern keine Möglichkeiten mehr bieten, die Restlichen korrekt einzusetzen.
+Falls keine Lösung nach mehreren Durchläufen gefunden werden kann, wird also ein neuer Versuch gestartet.
+
+\section{Umsetzung und Quellcode}
+Die Idee wurde in C++ umgesetzt. Aufgrund einer Inkompalibität seitens C++ kann das Programm nicht mit
+Umlauten umgehen.\\\\
+Das Feld, in das die Wörter später eingefügt werden, wird als 2D-Array vom Typ char beschrieben.
+Nachdem die Wörter als string-Array eingelesen worden, wird im Fall das eine Lösung mit der höchsten Schwierigkeiten generiert werden soll, eine Methode namens extraWoerter aufgerufen, welche Wörterteile als neue Wörter in das Wörter-Array hinzufügt. Andernfalls wird dies übersprungen.
+
+Als nächstes wird für jedes Wort die Funktion wortEinsetzen aufgerufen, welche versucht, das Wort in die verbleibenden Felder einzubetten.
+
+Hier wird wie oben in der Idee beschrieben erstmal ein zufälliger Punkt aus den möglichen Punkten ausgesucht.
+Die möglichen Punkte werden als unordered set von Koordinaten dargestellt. Sobald ein Feld besetzt wird, wird auch die Koordinate aus dem möglichen Punkten entfernt.
+Nachdem also ein zufälliger verfügbarer Punkt ausgesucht wurde, ist zu überprüfen, ob dort das jeweilige Wort eingesetzt werden kann. Das passiert, indem jeweils für jeden Punkt, der besetzt werden müsste, eine Methode kannEinsetzen aufgerufen wird. Wenn das Wort am Ende passt, werden alle Buchstaben an den passenden Koordinaten
+in das 2D-Array eingesetzt.
+
+Wie oben beschrieben, wird, für den Fall, dass eine gewisse Kombination an besetzten Feldern keine Lösung mehr bietet - also das Einsetzen eines speziellen Wortes bei vielen Versuchen nicht ermöglicht, der vorherige Fortschritt (damit sind die schon eingesetzten Worte gemeint) gelöscht und somit aus dem 2D-Array entfernt.
+
+Zu den Zeitpunkt, wenn das Programm eine passende Lösung zur Zusammensetzung gefunden hat, sind also auch schon die zuvor durch extraWoerter generierten Wortteile in der Zwischenlösung enthalten.
+Jetzt füllt die Methode fuellen die restlichen Felder mit zufälligen Buchstaben. 
+Auf höchster Schwierigkeit werden hier auch die Buchstaben zufällig groß- oder kleingeschrieben befüllt.
+\section{Beispiele}
+
+\end{document}
