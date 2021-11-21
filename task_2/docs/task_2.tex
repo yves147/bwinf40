@@ -76,13 +76,23 @@
 \vspace{0.5cm}
 
 \section{Abstract}
+Es werden zwei Tabellen erstellt:
+\begin{itemize}
+    \item Eine mit der minimalen Bewertung des optimalen Weges zu jedem Hotel nach $d$ Tagen und
+    \item eine mit dem jeweiligen Vorgaenger auf diesem optimalen Weg.
+\end{itemize}
+Anschliessend werden diese beiden Tabellen benutzt, um den optimalen Weg zum Ziel zu bestimmen.
+Wenn dieser existiert, koennen wird die minimale Bewertung und die besuchten Hotels ausgegeben.
+Schlussendlich wird die Lösungsidee in C++ implementiert und Spezialfälle mit Beispieleingaben erläutert.
 
 \section{Lösungsidee}
 % Die Idee der Lösung sollte hieraus vollkommen ersichtlich werden, ohne dass auf die eigentliche Implementierung Bezug genommen wird.
 Für jedes Hotel $x$ lässt sich sagen, ob es innerhalb von $d$ Tagen erreicht werden kann.
 Ist dies für ein $d$ der Fall, kann die minimale Bewertung aller Hotels, die auf dem optimalen Weg zu $x$ liegenden, angegeben werden.
 Dieser optimale Weg benötigt genau $d$ Tage.
-Zudem ist er in dem Sinne optimal, dass kein anderer Weg existiert, der in $d$ Tagen das Hotel erreicht und eine besserer minimale Bewertung aufweist.
+Er ist in dem Sinne optimal, dass kein anderer Weg existiert, der in $d$ Tagen das Hotel erreicht und eine besserer minimale Bewertung aufweist.
+Daher weist der optimale Weg immer die \textbf{beste minimale Bewertung} aller Hotels auf diesem Weg auf.
+
 Diese Werte können in einer Tabelle---der Minimumstabelle---dargestellt werden und werden minimale Webbewertung genannt:
 \begin{lstlisting}
                   min rating at day:
@@ -189,7 +199,7 @@ void populate_tables(
 Diese Funktion ist die Aufwändigste der Implementation.
 Obwohl sie drei verschachtelte Schleifen enthält ist die Laufzeit der gesamten Implementation für fünf Tage linear, wenn davon ausgegangen wird, dass der Abstand zwischen zwei Hotels in etwa immer gleich ist.
 Durch diese Annahme benötigen die inneren Schleifen unabhängig von der Anzahl an Hotels immer gleich lange.
-Es bleibt nur die äussere.
+Es bleibt nur die Äussere.
 
 Wenn die Tabellen produziert wurde, können mit \lstinline{get_best_day} die Werte des \glqq{}Zielhotels\grqq{} in der Minimumstabelle linear nach dem Optimum durchsucht werden.
 Wenn es nicht möglich ist, unter den gegebenen Anforderungen das Ziel zu erreichen, wird $-1$ zurückgegeben.
