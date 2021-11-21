@@ -18,7 +18,7 @@ void populate_tables(
     // go through all but "first" hotels
     for(auto cur = hotels.begin() + 1; cur != hotels.end(); ++cur) {
         int cur_idx = cur - hotels.begin();
-        // first hotel, `cur` can be reached from
+        // first hotel `cur` can be reached from
         auto prev = std::lower_bound(hotels.begin(), hotels.end(),
                                      std::make_pair(cur->first - DAY_LEN, .0f));
         for(; prev != cur; ++prev) {
