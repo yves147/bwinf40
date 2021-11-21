@@ -56,6 +56,7 @@ wstring                       woerter[100];
 unordered_set<pair<int, int>> verfuegbar;
 int                           versuche = 0;
 
+// Ausgabe des 2D-Vektors
 void ausgabe(const vector<vector<wchar_t>>& feld)
 {
     std::wcout << std::endl;
@@ -75,6 +76,9 @@ void ausgabe(const vector<vector<wchar_t>>& feld)
     std::wcout << (versuche - 100) << " Versuche";
 }
 
+// Abhängig von der Schwierigkeit gibt diese Funktion einen zufälligen
+// Buchstaben zurück. Wenn ein schweres Worträtsel generiert werden soll,
+// werden auch kleine Buchstaben mit einer Chance von 50% zurückgegeben.
 wchar_t zufallsCharakter()
 {
     if(SCHWIERIGKEIT < 2) {
@@ -90,6 +94,10 @@ wchar_t zufallsCharakter()
     }
 }
 
+// Diese Funktion ändert einen Punkt np abhängig von der Richtung rt auf
+// einen Feld feld so, das der neue Punkt, dem nächsten Schritt
+// in die angegebene Richtung entspricht.
+// Bsp.: (0,0) wird zu (0,1) mit der Richtung richtung::RECHTS
 void punktBewegen(vector<vector<wchar_t>>& feld, richtung rt, point& np)
 {
     int i = np.i;
@@ -135,6 +143,8 @@ void punktBewegen(vector<vector<wchar_t>>& feld, richtung rt, point& np)
     }
 }
 
+// Diese Methode setzt alle Werte aus dem 2D-Vektor auf den Standard-Wert
+// und sagt zudem, dass alle Werte wieder besetzt werden können.
 void loeschen(vector<vector<wchar_t>>& feld)
 {
     for(int i = 0; i < feld.size(); i++) {
@@ -164,6 +174,8 @@ bool kannEinsetzen(vector<vector<wchar_t>>& feld, const wchar_t* wort, point sta
     return true;
 }
 
+// Diese Methode füllt alle noch nicht belegten Punkte mit Buchstaben
+// aus zufallsCharakter aus
 void fuellen(vector<vector<wchar_t>>& feld)
 {
     for(int i = 0; i < feld.size(); i++) {
