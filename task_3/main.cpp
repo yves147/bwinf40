@@ -8,6 +8,7 @@
 using namespace std;
 
 int SCHWIERIGKEIT = 0;
+bool fehler = false;
 
 template<typename S>
 auto select_random(const S& s, size_t n)
@@ -66,7 +67,7 @@ void ausgabe(const vector<vector<wchar_t>>& feld)
     for(int i = 0; i < feld.size(); ++i) {
         for(int k = 0; k < feld[i].size(); ++k) {
             if(k == 0) {
-                std::wcout << "\t" << feld[i][k] << " ";
+                std::wcout << "" << feld[i][k] << " ";
             }
             else if(k == feld[i].size() - 1) {
                 std::wcout << feld[i][k] << std::endl;
@@ -76,7 +77,7 @@ void ausgabe(const vector<vector<wchar_t>>& feld)
             }
         }
     }
-    std::wcout << versuche << " Versuche";
+    std::wcout << (versuche - 100) << " Versuche";
 }
 
 wchar_t zufallsCharakter()
@@ -153,16 +154,16 @@ bool kannEinsetzen(vector<vector<wchar_t>>& feld, const wchar_t* wort, point sta
 {
     int   i = 0, l = (int)std::char_traits<wchar_t>::length(wort);
     point np = start;
-    std::wcout << "start ";
-    pp(start);
+    //std::wcout << "start ";
+    //pp(start);
     while(i < l) {
         if(np.i < 0 || np.i >= feld.size() || np.k < 0 || np.k >= feld[0].size()) {
             return false;
         }
-        if(feld[np.i][np.k] == STANDARD) {
+        if(feld[np.i][np.k] == STANDARD || feld[np.i][np.k] == wort[i]) {
             punktBewegen(feld, d, np);
-            std::wcout << i << L" " << l << std::endl;
-            pp(np);
+            //std::wcout << i << L" " << l << std::endl;
+            //pp(np);
             i++;
         }
         else {
@@ -174,7 +175,7 @@ bool kannEinsetzen(vector<vector<wchar_t>>& feld, const wchar_t* wort, point sta
 
 void fuellen(vector<vector<wchar_t>>& feld)
 {
-    ausgabe(feld);
+    //ausgabe(feld);
     for(int i = 0; i < feld.size(); i++) {
         for(int k = 0; k < feld[i].size(); k++) {
             if(feld[i][k] == STANDARD) {
@@ -186,13 +187,13 @@ void fuellen(vector<vector<wchar_t>>& feld)
 
 void wortEinsetzen(vector<vector<wchar_t>>& feld, const wchar_t* wort)
 {
-    int      l = (int)std::char_traits<wchar_t>::length(wort);
+    int      laenge = (int)std::char_traits<wchar_t>::length(wort);
     point    start;
-    richtung d;
+    richtung rt;
     do {
         ++versuche;
         pair<int, int> n;
-        if(l == feld.size()) {
+        if(laenge == feld.size()) {
             vector<pair<int, int>> t;
             for(int hi = 0; hi < feld.size(); ++hi) {
                 pair<int, int> j   = std::make_pair<int, int>((int)hi, 0);
@@ -203,51 +204,45 @@ void wortEinsetzen(vector<vector<wchar_t>>& feld, const wchar_t* wort)
             }
             auto r = rand() % t.size();
             n      = *select_random(t, r);
-            d      = richtung::RECHTS;
-            ausgabe(feld);
-            std::wcout << std::endl
-                       << wort << std::endl;
-            std::wcout << n.first << L" " << n.second << std::endl;
+            rt      = richtung::RECHTS;
+            //ausgabe(feld);
+            /*std::wcout << std::endl
+                       << wort << std::endl;*/
+            //std::wcout << n.first << L" " << n.second << std::endl;
         }
         else {
             auto r = rand() % verfuegbar.size();
             n      = *select_random(verfuegbar, r);
             switch(SCHWIERIGKEIT) {
             case 0:
-                d = richtung(rand() % 3);
+                rt = richtung(rand() % 3);
                 break;
             case 1:
-                d = richtung(rand() % 6);
+                rt = richtung(rand() % 6);
                 break;
             case 2:
-                d = richtung(rand() % 8);
+                rt = richtung(rand() % 8);
             }
         }
         start.i = n.first;
         start.k = n.second;
-    } while(!kannEinsetzen(feld, wort, start, d));
-
+    } while(!kannEinsetzen(feld, wort, start, rt));
     int   i  = 0;
     point np = start;
-    while(i < l) {
+    while(i < laenge) {
         verfuegbar.erase(make_pair(np.i, np.k));
-        if(l == 23) {
-            if(SCHWIERIGKEIT == 2) {
-                if(rand() % 2 == 0) {
-                    feld[np.i][np.k] = (wchar_t)towupper(wort[i]);
-                }
-                else {
-                    feld[np.i][np.k] = (wchar_t)towlower(wort[i]);
-                }
+        if(SCHWIERIGKEIT == 2) {
+            if(rand() % 2 == 0) {
+                feld[np.i][np.k] = (wchar_t)towupper(wort[i]);
             }
             else {
-                feld[np.i][np.k] = (wchar_t)towupper(wort[i]);
+                feld[np.i][np.k] = (wchar_t)towlower(wort[i]);
             }
         }
         else {
-            feld[np.i][np.k] = L"."[0];
+            feld[np.i][np.k] = (wchar_t)towupper(wort[i]);
         }
-        punktBewegen(feld, d, np);
+        punktBewegen(feld, rt, np);
         i++;
     }
 }
@@ -295,14 +290,15 @@ void kombinationFinden(vector<vector<wchar_t>>& feld)
         wstring wort = woerter[i];
         try {
             if(wort.size() > feld.size() && wort.size() > feld[0].size()) {
-                throw "Keine Lösung";
+                fehler = true;
+                throw "Keine Loesung";
             }
             wortEinsetzen(feld, wort.c_str());
-            std::wcout << wort << i << std::endl;
+            //std::wcout << wort << i << std::endl;
         }
         catch(const char*& e) {
             versuche = 0;
-            std::wcout << "Generiere neuen Versuch.." << e << std::endl;
+            std::cout << e << std::endl;
         }
     }
 }
@@ -329,7 +325,10 @@ int main(int argc, char* argv[])
     std::sort(std::begin(woerter), std::end(woerter), compare_length());
     loeschen(feld);
     kombinationFinden(feld);
+    if(fehler == true){
+        return 0;
+    };
     fuellen(feld);
-    ausgabe(feld);
+    //ausgabe(feld);
     return 0;
 }
