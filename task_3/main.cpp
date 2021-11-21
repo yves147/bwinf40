@@ -51,11 +51,6 @@ struct point {
     int i, k;
 };
 
-void pp(point p)
-{
-    std::wcout << "y: " << p.i << ", x: " << p.k << std::endl;
-}
-
 wchar_t                       STANDARD = ' ';
 wstring                       woerter[100];
 unordered_set<pair<int, int>> verfuegbar;
@@ -154,16 +149,12 @@ bool kannEinsetzen(vector<vector<wchar_t>>& feld, const wchar_t* wort, point sta
 {
     int   i = 0, l = (int)std::char_traits<wchar_t>::length(wort);
     point np = start;
-    //std::wcout << "start ";
-    //pp(start);
     while(i < l) {
         if(np.i < 0 || np.i >= feld.size() || np.k < 0 || np.k >= feld[0].size()) {
             return false;
         }
         if(feld[np.i][np.k] == STANDARD || feld[np.i][np.k] == wort[i]) {
             punktBewegen(feld, d, np);
-            //std::wcout << i << L" " << l << std::endl;
-            //pp(np);
             i++;
         }
         else {
@@ -175,7 +166,6 @@ bool kannEinsetzen(vector<vector<wchar_t>>& feld, const wchar_t* wort, point sta
 
 void fuellen(vector<vector<wchar_t>>& feld)
 {
-    //ausgabe(feld);
     for(int i = 0; i < feld.size(); i++) {
         for(int k = 0; k < feld[i].size(); k++) {
             if(feld[i][k] == STANDARD) {
@@ -193,9 +183,9 @@ void wortEinsetzen(vector<vector<wchar_t>>& feld, const wchar_t* wort)
     do {
         ++versuche;
         pair<int, int> n;
-        if(laenge == feld.size()) {
+        if(laenge == feld[0].size()) {
             vector<pair<int, int>> t;
-            for(int hi = 0; hi < feld.size(); ++hi) {
+            for(int hi = 0; hi < feld[0].size(); ++hi) {
                 pair<int, int> j   = std::make_pair<int, int>((int)hi, 0);
                 auto           sit = verfuegbar.find(j);
                 if(sit != verfuegbar.end()) {
@@ -205,10 +195,19 @@ void wortEinsetzen(vector<vector<wchar_t>>& feld, const wchar_t* wort)
             auto r = rand() % t.size();
             n      = *select_random(t, r);
             rt      = richtung::RECHTS;
-            //ausgabe(feld);
-            /*std::wcout << std::endl
-                       << wort << std::endl;*/
-            //std::wcout << n.first << L" " << n.second << std::endl;
+        }
+        else if (laenge > feld[0].size() && laenge > feld.size()) {
+            vector<pair<int, int>> t;
+            for(int hi = 0; hi < feld.size(); ++hi) {
+                pair<int, int> j   = std::make_pair<int, int>(0, (int)hi);
+                auto           sit = verfuegbar.find(j);
+                if(sit != verfuegbar.end()) {
+                    t.push_back(*sit);
+                }
+            }
+            auto r = rand() % t.size();
+            n      = *select_random(t, r);
+            rt      = richtung::RUNTER;
         }
         else {
             auto r = rand() % verfuegbar.size();
@@ -294,7 +293,6 @@ void kombinationFinden(vector<vector<wchar_t>>& feld)
                 throw "Keine Loesung";
             }
             wortEinsetzen(feld, wort.c_str());
-            //std::wcout << wort << i << std::endl;
         }
         catch(const char*& e) {
             versuche = 0;
