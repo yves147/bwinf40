@@ -81,31 +81,31 @@ Daher generiert die erste Stufe lediglich Wörter in diese Richtungen für das R
 Schwieriger wird es dann, wenn auch schräg-geschriebene Wörter möglich sind. Zudem werden in der
 zweiten Schwierigkeitsstufe Teile der Wörter in das Rätsel eingefügt, um für Verwirrung zu sorgen.
 Als letzte Schwierigkeit können Wörter nun in alle Richtungen geschrieben sein. Dazu werden
-die Buchstaben auch zufällig groß und klein geschrieben. Das macht das Rätsel nochmal unübersichtlicher. 
+die Buchstaben auch zufällig groß und klein geschrieben. Das macht das Rätsel nochmal unübersichtlicher.
 \subsection{Schritte}
 Das Hauptproblem bei dieser Aufgabe ist es, die Wörter so nebenbeinander und übereinander anzuordnen, dass
 Sie alle in die verfügbaren Zellen des Rätsels passen. Der Ansatz geht nach folgenden Schritten vor:
 \begin{enumerate}
-	\item Sortiere die Wörter nach Länge, sodass die längsten Wörter am Anfang sind.
-	\item Für jedes Wort: Suche einen zufälligen Punkt $(x, y)$ aus, der noch nicht von anderen Buchstaben b
-	esetzt ist.
-	\item Schaue, ob von diesen ausgehend in eine zufällige Richtung das Wort eingesetzt werden kann. Alle 
-	Felder müssen entweder frei sein oder denselben Buchstaben beinhalten, der dort eingesetzt werden muss.
-	\item Falls ja, setze es ein. Sonst, versuche es erneut ab Schritt 2.
+    \item Sortiere die Wörter nach Länge, sodass die längsten Wörter am Anfang sind.
+    \item Für jedes Wort: Suche einen zufälligen Punkt $(x, y)$ aus, der noch nicht von anderen Buchstaben b
+          esetzt ist.
+    \item Schaue, ob von diesen ausgehend in eine zufällige Richtung das Wort eingesetzt werden kann. Alle
+          Felder müssen entweder frei sein oder denselben Buchstaben beinhalten, der dort eingesetzt werden muss.
+    \item Falls ja, setze es ein. Sonst, versuche es erneut ab Schritt 2.
 \end{enumerate}
 Die oberen Punkte können jedoch nicht immer zu einer Lösung führen, da gewisse Kombinationen an schon
 gesetzten Wörtern keine Möglichkeiten mehr bieten, die Restlichen korrekt einzusetzen.
 Falls keine Lösung nach mehreren Durchläufen gefunden werden kann, wird also ein neuer Versuch gestartet.
 
-Zudem ist noch ein Spezialfall zu berücksichtigen, der durch die obere Vorgehensweise nicht ausreichend 
-abgedeckt wird. Wenn man ein Wort hat, dass genauso lang ist, wie das Feld breit bzw. hoch ist, wird bei der 
-Generierung des Startpunktes $(x,y)$ berücksichtigt, dass er nur am Rand existieren kann und das Wort nur in 
+Zudem ist noch ein Spezialfall zu berücksichtigen, der durch die obere Vorgehensweise nicht ausreichend
+abgedeckt wird. Wenn man ein Wort hat, dass genauso lang ist, wie das Feld breit bzw. hoch ist, wird bei der
+Generierung des Startpunktes $(x,y)$ berücksichtigt, dass er nur am Rand existieren kann und das Wort nur in
 gewisse Richtungen sicher verlaufen kann, ohne die anderen Worte zu beeinflussen.
 
 \section{Umsetzung und Quellcode}
-Die Lösungsidee wurde in C++ umgesetzt. Da C++ keine plattformübergreifende Implementation von Umlauten hat, 
-kann das Programm nicht mit diesen umgehen. Die Richtungen sind als Enum im Programm dargestellt. Ein 
-einzelner Punkt in den Feld nxm, dessen Größe durch die Eingabe vorgegeben wird, ist durch die Structure point 
+Die Lösungsidee wurde in C++ umgesetzt. Da C++ keine plattformübergreifende Implementation von Umlauten hat,
+kann das Programm nicht mit diesen umgehen. Die Richtungen sind als Enum im Programm dargestellt. Ein
+einzelner Punkt in den Feld nxm, dessen Größe durch die Eingabe vorgegeben wird, ist durch die Structure point
 beschrieben. Das Attribut $i$ steht hierbei für die Y-Koordinate und $k$ für die X-Koordinate.
 
 \begin{lstlisting}[language=C++]
@@ -125,9 +125,9 @@ struct point {
 };
 \end{lstlisting}
 
-Das Feld, in das die Wörter später eingefügt werden, wird als 2D-Vektor vom Typ \lstinline{wchar_t} 
-beschrieben. Nachdem die Wörter als string-Array eingelesen worden wird im Fall das eine Lösung mit der 
-höchsten Schwierigkeiten generiert werden soll, eine Methode namens \lstinline{extraWoerter} aufgerufen, 
+Das Feld, in das die Wörter später eingefügt werden, wird als 2D-Vektor vom Typ \lstinline{wchar_t}
+beschrieben. Nachdem die Wörter als string-Array eingelesen worden wird im Fall das eine Lösung mit der
+höchsten Schwierigkeiten generiert werden soll, eine Methode namens \lstinline{extraWoerter} aufgerufen,
 welche Wörterteile als neue Wörter in das Wörter-Array hinzufügt. Andernfalls wird dies übersprungen.
 
 \begin{lstlisting}[language=C++]
@@ -143,12 +143,12 @@ void extraWoerter(int groesse)
 }
 \end{lstlisting}
 
-Als Nächstes wird für jedes Wort die Funktion \lstinline{wortEinsetzen} aufgerufen, welche versucht, das Wort 
-in die verbleibenden Felder einzubetten. Hier wird wie bereits beschrieben erstmal ein zufälliger Punkt 
-ausgesucht und eine zufällige Richtung bestimmt, jedoch abhängig von der Schwierigkeit, 
+Als Nächstes wird für jedes Wort die Funktion \lstinline{wortEinsetzen} aufgerufen, welche versucht, das Wort
+in die verbleibenden Felder einzubetten. Hier wird wie bereits beschrieben erstmal ein zufälliger Punkt
+ausgesucht und eine zufällige Richtung bestimmt, jedoch abhängig von der Schwierigkeit,
 was hier als switch-case implementiert wurde.
 Die möglichen Punkte werden als \lstinline{unordered_set} von Koordinaten dargestellt (Im folgenden Code-
-Ausschnitt die Variable \lstinline{verfuegbar}). 
+Ausschnitt die Variable \lstinline{verfuegbar}).
 
 \begin{lstlisting}[language=C++]
 auto rt     = rand() % verfuegbar.size();
@@ -203,8 +203,8 @@ else if (laenge > feld[0].size() && laenge > feld.size()) {
 }
 \end{lstlisting}
 
-Nachdem also ein zufälliger verfügbarer Punkt ausgesucht wurde, ist zu überprüfen, ob dort das jeweilige Wort 
-eingesetzt werden kann. Das passiert, indem jeweils für das Wort abhängig von einer Richtung und einen 
+Nachdem also ein zufälliger verfügbarer Punkt ausgesucht wurde, ist zu überprüfen, ob dort das jeweilige Wort
+eingesetzt werden kann. Das passiert, indem jeweils für das Wort abhängig von einer Richtung und einen
 Startpunkt, eine Methode \lstinline{kannEinsetzen} aufgerufen wird.
 
 \begin{lstlisting}[language=C++]
@@ -260,7 +260,7 @@ while(i < laenge) {
 
 Zu dem Zeitpunkt, an dem das Programm eine passende Lösung zur Zusammensetzung gefunden hat, sind also auch
 schon die zuvor durch \lstinline{extraWoerter} generierten Wortteile in der Zwischenlösung enthalten.
-Jetzt füllt die Methode \lstinline{fuellen} die restlichen Felder mit zufälligen Buchstaben. 
+Jetzt füllt die Methode \lstinline{fuellen} die restlichen Felder mit zufälligen Buchstaben.
 Auf höchster Schwierigkeit werden hier auch die Buchstaben zufällig groß- oder kleingeschrieben befüllt.
 Hierfür wird für jedes Feld, dass noch dem Standard-Charakter entspricht, die Methode \lstinline{zufallsCharakter} aufgerufen.
 
@@ -525,7 +525,7 @@ F L N B D D T R T H B E E E U T D F V L L I P E F I C T A N F G
 
 \end{lstlisting}
 
-In der folgenden Ausgabe kann man auch erkennen, wie z.B. "CHArTs" nach oben-links gerichtet ist, was für den Menschen nochmal eindeutig schwerer zu lesen ist.	
+In der folgenden Ausgabe kann man auch erkennen, wie z.B. "CHArTs" nach oben-links gerichtet ist, was für den Menschen nochmal eindeutig schwerer zu lesen ist.
 \begin{lstlisting}
 cat examples/worte0.txt | ./a.out 2
 ## WOERTER ALLEINE
@@ -709,7 +709,7 @@ K M U t m a U s r p
 Hier sieht man, dass BILDSCHIRM und FESTPLATTE richtig in das Rätsel eingefügt werden.
 Zudem sind in der zweiten Zeile zur Verwirrung "COMPut" und "upMOC" ("COMPU") als Teile von COMPUTER
 eingefügt wurden.\medskip
-\subsection*{Weiterer Spezialfall}
+\subsection*{worte6.txt - Spezialfall 2}
 Spezielle Datei:
 \begin{lstlisting}
 5 5
