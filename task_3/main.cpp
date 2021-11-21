@@ -155,18 +155,23 @@ bool kannEinsetzen(vector<vector<wchar_t>>& feld, const wchar_t* wort, point sta
     int   i  = 0;
     point np = start;
     while(i < (int)std::char_traits<wchar_t>::length(wort)) {
-        try {
-            if(feld[np.i][np.k] == STANDARD) {
-                np = punktBewegen(np, d);
-                i++;
-            }
-            else {
+        //try {
+        if(feld[np.i][np.k] == STANDARD) {
+            np = punktBewegen(np, d);
+            std::wcout << np.i << L"-" << feld.size() << std::endl;
+            std::wcout << np.k << L"-" << feld[0].size() << std::endl;
+            if(np.i < 0 || np.i >= feld.size() || np.k < 0 || np.k >= feld[0].size()) {
                 return false;
             }
+            i++;
         }
-        catch(const char* msg) {
+        else {
             return false;
         }
+        /*}
+        catch(const char* msg) {
+            return false;
+        }*/
     }
     return true;
 }
