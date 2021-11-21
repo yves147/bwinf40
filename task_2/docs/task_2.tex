@@ -337,6 +337,20 @@ idx     location        rating  min rating till here
 \end{lstlisting}
 Aufgrund von 500 Hotels wird für dieses Beispiel die Minimumstabelle nicht abgedruckt.
 
+\subsection*{Hotels 4}
+\begin{lstlisting}
+./tabs.py <(cat examples/hotels4.txt | ./a.out)
+
+These hotels should be used with min rating 4.6:
+idx     location        rating  min rating till here
+===     ========        ======  ====================
+97      340             4.6     4.6
+207     658             4.6     4.6
+310     979             4.7     4.6
+426     1301            5       4.6
+\end{lstlisting}
+Die Minimumstabelle wird nicht dargestellt.
+
 \subsection*{Hotels 5}
 \begin{lstlisting}
 ./tabs.py <(cat examples/hotels5.txt | ./a.out)
