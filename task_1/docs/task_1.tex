@@ -78,15 +78,15 @@
 \section{Lösungsidee}
 % Die Idee der Lösung sollte hieraus vollkommen ersichtlich werden, ohne dass auf die eigentliche Implementierung Bezug genommen wird.
 Im Folgenden werden querstehende Autos mit \glqq{}Q-Auto\grqq{} abgekuerzt; alle nicht querstehenden Autos werden \glqq{}Auto\grqq{} genannt.
-Ein Feld---eine moegliche Position fuer ein Q-Auto---selbst kann nicht verschoben werden, allerdings wird im Folgenden diese Terminologie verwendet.
+Ein Feld---eine moegliche Position fuer ein (halbes) Q-Auto---selbst kann nicht verschoben werden, allerdings wird im Folgenden diese Terminologie verwendet.
 Hierbei wird festgelegt, dass ein Feld soweit verschoben werden kann, wie das an dieser Stelle stehendes Q-Auto verschoben werden kann.
 Wenn kein Q-Auto auf einem Feld steht, kann es beliebig verschoben werden.
 
 Es laesst sich feststellen, dass jedes Feld in einer von drei Kategorien eingeordnet werden kann:
 \begin{enumerate}
     \item Das Feld kann zweifach nach links verschoben werden.
-          Eine Verschiebung um mehr als zwei Positionen ist nie notwendig da die Laenge eines Q-Autos zwei entspricht.
-          Diese Verschiebungen werden ignoriert.
+          Eine Verschiebung um mehr als zwei Positionen ist nie notwendig da die Laenge eines Q-Autos zwei entspricht und immer nur ein einziges Feld freigemacht werden muss.
+          Daher werden groessere Verschiebungen ignoriert.
     \item Das Feld kann genau einfach nach links verschoben werden.
     \item Das Feld kann nicht nach links verschoben werden.
 \end{enumerate}
@@ -96,22 +96,28 @@ Nun kann fuer jedes Feld $A$ bestimmt werden, welche anderen Felder wieweit vers
 Hierbei werden alle Felder, die nicht mit einem Q-Auto besetzt sind, per Definition als nicht zu verschieben angesehen.
 Diese Information wird linke beziehungsweise rechte volle Verschiebungsbestimmung des Feldes $A$ genannt.
 Eine Verschiebungsbestimmung $\Lambda$ fuer das Feld $A$ bei insgesamt $n$ Feldern entspricht der Liste mit den Indizes $0,1,\dots,n-1$.
-Das Element $e$ am Index $i$ entspricht $1$, wenn es einfach verschoben werden muss, $2$ wenn es zweifach verschoben werden muss und $0$ wenn es nicht verschoben werden muss.
+Das Element $e$ am Index $i$ entspricht:
+\begin{itemize}
+    \item[$1$] wenn das Feld mit dem Index $i$ einfach verschoben werden muss,
+    \item[$2$] wenn es zweifach verschoben werden muss und
+    \item[$0$] wenn es nicht verschoben werden muss.
+\end{itemize}
 
-Wenn ein Feld zweifach verschoben werden kann, das Feld allerdings nur einfach verschoben werden muss, kann die reduzierte Verschiebungsbestimmung verwendet werden kann.
+Wenn ein Feld zweifach verschoben werden kann, das Feld allerdings nur einfach verschoben werden muss, kann die reduzierte Verschiebungsbestimmung verwendet werden.
 Die reduzierte Verschiebungsbestimmung entspricht der vollen Verschiebungsbestimmung $\Lambda$, wobei jeder Wert $e$ von $\Lambda$ um $1$ reduziert wird, wenn $e>0$.
-Dies laesst sich dadurch zeigen, dass wenn ein Q-Auto einmal weniger verschoben werden muss alle anderen notwendigen Verschiebungen ebenfalls einmal weniger durchgefuehrt werden muessen.
-Die fuer eine bestimmte Verschiebung notwendige Verschiebungsbestimmung (entweder voll oder reduziert) wird notwendige Verschiebungsbestimmung genannt.
+Dies laesst sich dadurch begruenden, dass wenn ein Q-Auto einmal weniger verschoben werden muss alle anderen notwendigen Verschiebungen ebenfalls einmal weniger durchgefuehrt werden muessen.
+Die fuer eine bestimmte Verschiebung minimal notwendige Verschiebungsbestimmung (entweder voll oder reduziert) wird notwendige Verschiebungsbestimmung genannt.
 
 \medskip
 Nun muss fuer jedes Feld sowohl die linke und rechte Kategorie als auch die Verschiebungsbestimmungen vorliegen.
 Damit laesst sich recht einfach bestimmen:
 \begin{itemize}
     \item Ob ein beliebiges Auto ausfahren kann:
-          Dies ist der Fall wenn mindestens eine Kategorie des betroffenen Feldes mindestens Kategorie 1 entspricht.
+          Dies ist der Fall wenn die Kategorie des betroffenen Feldes mindestens $1$ entspricht.
     \item Ob die Verschiebung nach links oder recht optimal ist:
           Wenn die Verschiebung nach links weniger Q-Autos bewegt als die nach rechts ist sie optimal.
           Die Menge an zu verschiebenden Autos entspricht der Haelfte der Menge an Elemente $e$ in der notwendigen Verschiebungsbestimmung mit $e>0$.
+          Dies ist der Fall, da alle Q-Autos mit zwei Feldern Laenge doppelt gezaehlt werden.
     \item Welche Q-Autos wie verschoben werden muessen, damit das betreffende Auto ausfahren kann.
           Hierzu kann wie bereits beschrieben die notwendige Verschiebungsbestimmung angewendet werden.
           Es ist nur zu beachten, dass sowohl das linke als auch rechte Feld des Q-Autos in der Verschiebungsbestimmung vorkommen.
@@ -132,7 +138,9 @@ Diese Information kann rekursiv berechnet werden, wobei der Rekursionsanker dem 
 Der Rand kann nicht verschoben werden.
 
 Fuer die Verschiebungsbestimmungen kann ein aehnliches Verfahren angewendet werden.
-Die Summe $\alpha$ zweier Verschiebungsbestimmungen $\Lambda$ und $\Gamma$ entspricht fuer jedes Element aus $\alpha$ dem Maximum der jeweiligen Element aus $\Lambda$ und $\Gamma$.
+Sei $\alpha$ die Summe zweier Verschiebungsbestimmungen $\Lambda$ und $\Gamma$.
+Dann entspricht jedes Element aus $\alpha$ mit dem Index $i$ dem Maximum der Elemente aus $\Lambda$ und $\Gamma$ mit dem Index $i$.
+
 \begin{itemize}
     \item Wenn ein Feld nur einfach verschoben werden kann entspricht dessen Verschiebungsbestimmung der notwendigen Verschiebungsbestimmung fuer die einfache Verschiebung des links angrenzenden Feldes.
     \item Kann es zweifach verschoben werden entspricht sie der Summe aus
@@ -147,6 +155,7 @@ Die Rekursionsanker sind die freien Felder, die verschoben werden koennen, ohne 
 Nun wird das Prinzip der dynamischen Programmierung verwendet.
 Es laesst sich erkennen, dass die Information eines Feldes immer nur von den Feldern zur Linken abhaengt.
 Daher koennen alle Felder von links nach rechts durchgegangen werden und der Kategorie und Verschiebungsbestimmung mithilfe der bereits berechneten Werte bestimmt werden.
+Wenn das Verfahren auf Rechtsverschiebungen angewendet wird, muessen die Felder analog von rechts nach links durchgegangen werden.
 
 Um das Verfahren zu optimieren muessen nur alle Felder mit Q-Autos betrachtet werden.
 Alle leeren Felder koennen immer beliebig verschoben werden und kein Q-Auto muss verschoben werden, um dies zu erreichen.
@@ -174,7 +183,7 @@ std::vector<std::vector<int>> right_shift(cars_amount, std::vector<int>(cars_amo
 \end{lstlisting}
 Hierbei entspricht \lstinline{left_shift[a]} der vollen Verschiebungsbestimmung des Feldes mit dem Index $a$.
 Alle Felder werden von links bei $0$ anfangend indiziert.
-Damit kann mit k \lstinline{left_shift[a][b]} die dafuer benoetigte Verschiebung des Feldes mit dem Index $b$ erhalten werden.
+Damit kann mit \lstinline{left_shift[a][b]} die dafuer benoetigte Verschiebung des Feldes mit dem Index $b$ erhalten werden.
 
 Die Funktion \lstinline{update_row_dir} bildet die Summe der beiden Verschiebungsbestimmungen \lstinline{source} und \lstinline{target}.
 Das Ergebnis ueberschreibt \lstinline{target}.
@@ -288,7 +297,8 @@ void load_possible_moves(
     }
 }
 \end{lstlisting}
-Diese Funktion ist die Aufwendigste und da sie jedes Q-Auto einmalig durchlaeuft, ist die Laufzeit dieser Implementation linear.
+Diese Funktion ist die Aufwendigste
+Da sie jedes Q-Auto einmalig durchlaeuft, ist die Laufzeit dieser Implementation linear.
 
 Nachdem diese Funktion fuer Links- und Rechtsverschiebungen ausgefuehrt wurde, wird fuer jedes Feld bestimmt, welche Verschiebung optimal ist und entsprechen ausgegeben.
 Hierfuer wird die Funktion \lstinline{better_shift} verwendet:
@@ -320,7 +330,7 @@ bool better_shift(const std::vector<int>& a, const std::vector<int>& b)
 }
 \end{lstlisting}
 An dieser Stelle wird die Aufgabe erweitert:
-Laut der Aufgabe sind zwei Loesungen dann gleichwertig, wenn sie gleich viele Q-Autos verschieben.
+Laut der Aufgabenstellung sind zwei Loesungen dann gleichwertig, wenn sie gleich viele Q-Autos verschieben.
 Die Implementation entscheidet in diesen Faellen allerdings immer so, dass die Q-Autos so wenig wie moeglich verschoben werden.
 
 \section{Beispiele}
@@ -705,6 +715,8 @@ B    0              0 0
 A: unmoeglich
 B: unmoeglich
 \end{lstlisting}
+Dieses Beispiel besteht aus einem Parkplatz mit zwei Feld, auf dem ein Q-Auto steht.
+Es ist offensichtlich, dass keins der Autos ausfahren kann.
 
 \subsection*{Leeres Beispiel}
 \begin{lstlisting}[language=C++]
@@ -802,5 +814,6 @@ X:
 Y:
 Z:
 \end{lstlisting}
+Wenn keine Q-Autos vorhanden sind, muss auch keins verschoben werden.
 
 \end{document}
