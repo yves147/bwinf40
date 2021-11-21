@@ -139,7 +139,7 @@ point punktBewegen(point start, richtung d)
     return np;
 }
 
-void loeschen(vector<vector<wchar_t>> &feld)
+void loeschen(vector<vector<wchar_t>>& feld)
 {
     for(int i = 0; i < feld.size(); i++) {
         for(int k = 0; k < feld[i].size(); k++) {
@@ -265,7 +265,7 @@ void extraWoerter(int groesse)
     }
 }
 
-void kombinationFinden(vector<vector<wchar_t>> &feld)
+void kombinationFinden(vector<vector<wchar_t>>& feld)
 {
     int groesse = (int)(sizeof(woerter) / sizeof(woerter[0]));
     if(SCHWIERIGKEIT == 2) {

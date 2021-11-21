@@ -151,7 +151,7 @@ Dann entspricht jedes Element aus $\alpha$ mit dem Index $i$ dem Maximum der Ele
     \item Kann es zweifach verschoben werden entspricht sie der Summe aus
           \begin{enumerate}[a)]
               \item der notwendigen Verschiebungsbestimmung für die zweifache Verschiebung des direkt angrenzenden Feldes und
-              \item der notwendigen verschiebungsbestimmung für die einfache Verschiebung des übernächsten Feldes.
+              \item der notwendigen Verschiebungsbestimmung für die einfache Verschiebung des übernächsten Feldes.
           \end{enumerate}
 \end{itemize}
 Diese Information kann ebenfalls rekursiv bestimmt werden.
@@ -212,13 +212,14 @@ void update_row_red(const std::vector<int>& source, std::vector<int>& target)
 \end{lstlisting}
 
 Um die Kategorien und Verschiebungsbestimmungen zu berechnen wird die Funktion \lstinline{load_possible_moves} verwendet.
-Diese kann sowohl Links- als auch Rechtsverschiebungen berechnen, dies wird durch den Parameter \lstinline{go_left} eingestellt.
+Diese kann sowohl Links- als auch Rechtsverschiebungen berechnen, was durch den Parameter \lstinline{go_left} eingestellt wird.
 Dementsprechend werden die Variablen \lstinline{start} und \lstinline{end} gesetzt.
 Die darauffolgende Hauptschleife erhöht (wenn von links nach rechts) oder erniedrigt (wenn von rechts nach links) den Zähler \lstinline{c}.
 In der Schleife werden dadurch Q-Autos in der korrekten Reihenfolge durchgegangen.
 
 Zuerst wird das Nachbarfeld (das direkt links beziehungsweise direkt rechts angrenzende Feld) und das übernächste Nachbarfeld definiert.
-Darauffolgend wird ueberprueft, wie weit diese Felder verschoben werden koennen...
+Darauffolgend wird überprüft, wie weit diese Felder verschoben werden können.
+Mit dieser Information wird die Kategorien und Verschiebungsbestimmung entsprechend der Lösungsidee aktualisiert.
 \begin{lstlisting}[language=C++]
 void load_possible_moves(
     const std::vector<std::pair<int, char>>& cross_cars,
@@ -308,7 +309,7 @@ void load_possible_moves(
     }
 }
 \end{lstlisting}
-Diese Funktion ist die Aufwendigste
+Diese Funktion ist die Aufwendigste.
 Da sie jedes Q-Auto einmalig durchläuft, ist die Laufzeit dieser Implementation linear.
 
 Nachdem diese Funktion für Links- und Rechtsverschiebungen ausgeführt wurde, wird für jedes Feld bestimmt, welche Verschiebung optimal ist und entsprechen ausgegeben.
@@ -726,7 +727,7 @@ B    0              0 0
 A: unmoeglich
 B: unmoeglich
 \end{lstlisting}
-Dieses Beispiel besteht aus einem Parkplatz mit zwei Feld, auf dem ein Q-Auto steht.
+Dieses Beispiel besteht aus einem Parkplatz mit zwei Feldern, auf dem ein Q-Auto steht.
 Es ist offensichtlich, dass keins der Autos ausfahren kann.
 
 \subsection*{Leeres Beispiel}
