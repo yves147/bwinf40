@@ -1,0 +1,8 @@
+6 6
+6
+EIN
+DA
+ER
+INFO
+DU
+UND

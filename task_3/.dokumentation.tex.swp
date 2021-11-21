@@ -112,6 +112,10 @@ Wie oben beschrieben, wird, für den Fall, dass eine gewisse Kombination an bese
 Zu den Zeitpunkt, wenn das Programm eine passende Lösung zur Zusammensetzung gefunden hat, sind also auch schon die zuvor durch extraWoerter generierten Wortteile in der Zwischenlösung enthalten.
 Jetzt füllt die Methode fuellen die restlichen Felder mit zufälligen Buchstaben. 
 Auf höchster Schwierigkeit werden hier auch die Buchstaben zufällig groß- oder kleingeschrieben befüllt.
+
 \section{Beispiele}
+
+\section{Laufzeitbetrachtung}
+
 
 \end{document}
