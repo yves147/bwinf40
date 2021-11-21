@@ -87,9 +87,11 @@ Das Hauptproblem bei dieser Aufgabe ist es, die Wörter so nebenbeinander und ü
 Sie alle in die verfügbaren Zellen des Rätsels passen. Der Ansatz geht nach folgenden Schritten vor:
 \begin{enumerate}
 	\item Sortiere die Wörter nach Länge, sodass die längsten Wörter am Anfang sind.
-	\item Für jedes Wort: Suche einen zufälligen Punkt $(x, y)$ aus, der noch nicht von anderen Buchstaben besetzt ist.
-	\item Schaue, ob von diesen ausgehend in eine zufällige Richtung das Wort eingesetzt werden kann (Alle Felder müssen entweder frei sein oder denselben Buchstaben beinhalten, der dort eingesetzt werden muss).
-	\item Falls ja, setze es ein. Sonst, versuche es mit Schritt 2.
+	\item Für jedes Wort: Suche einen zufälligen Punkt $(x, y)$ aus, der noch nicht von anderen Buchstaben b
+	esetzt ist.
+	\item Schaue, ob von diesen ausgehend in eine zufällige Richtung das Wort eingesetzt werden kann. Alle 
+	Felder müssen entweder frei sein oder denselben Buchstaben beinhalten, der dort eingesetzt werden muss.
+	\item Falls ja, setze es ein. Sonst, versuche es erneut ab Schritt 2.
 \end{enumerate}
 Die oberen Punkte können jedoch nicht immer zu einer Lösung führen, da gewisse Kombinationen an schon
 gesetzten Wörtern keine Möglichkeiten mehr bieten, die Restlichen korrekt einzusetzen.
@@ -242,7 +244,7 @@ wchar_t zufallsCharakter()
 
 \section{Beispiele}
 Das Programm braucht für alle Beispieldateien ungefähr 3-6 Millisekunden.
-\subsection{Aufgabenbeispiel auf höchster Schwierigkeit}
+\subsection*{Aufgabenbeispiel auf höchster Schwierigkeit}
 \begin{lstlisting}
 cat examples/worte0.txt | ./a.out 2
 
@@ -252,7 +254,7 @@ L T r v g
 B T o r f
 a v e U T
 \end{lstlisting}
-\subsection{worte3.txt im einfachen Modus}
+\subsection*{worte3.txt im einfachen Modus}
 \begin{lstlisting}
 cat examples/worte3.txt | ./a.out 0
 ## WOERTER ALLEINE
@@ -303,7 +305,7 @@ U J I V H V B J G W M H R Z S Q K I F H B J N A
 W M N U E E M O N O G R A M M V U O G P E O K L
 L O W S M K Z D J S V O B Z Z O Z N V A M R G S
 \end{lstlisting}
-\subsection{worte4.txt in allen Schwierigkeiten}
+\subsection*{worte4.txt in allen Schwierigkeiten}
 \begin{lstlisting}
 cat examples/worte0.txt | ./a.out 0
 ## WOERTER ALLEINE
@@ -567,7 +569,7 @@ y i L H O f D j L D I S K U s s I o n s S E i t e x f P L B O i
 y w N I K S K n O I t a M R O f N i b n I F k X r q q M O w b R
 g V i h c r a O t u a s y w T x y D K A T e G O r i e g R a P h
 \end{lstlisting}
-\subsection{worte5.txt im einfachen Modus}
+\subsection*{worte5.txt im einfachen Modus}
 
 \begin{lstlisting}
 ## WORT ALLEINE
@@ -634,7 +636,7 @@ C I Z O F U N Z C P W K F N K B P G M Q V W U N C H I F J W
 A L G B Z N X O M A D L M L A W M P C B F Z Z B N B I X I S
 \end{lstlisting}
 
-\subsection{worte2.txt - Spezialfall 1}
+\subsection*{worte2.txt - Spezialfall 1}
 \begin{lstlisting}
 ## WOERTER ALLEINE
 R u T a t S a t    
@@ -663,7 +665,7 @@ K M U t m a U s r p
 Hier sieht man, dass BILDSCHIRM und FESTPLATTE richtig in das Rätsel eingefügt werden.
 Zudem sind in der zweiten Zeile zur Verwirrung "COMPut" und "upMOC" ("COMPU") als Teile von COMPUTER
 eingefügt wurden.\medskip
-\subsection{Weiterer Spezialfall}
+\subsection*{Weiterer Spezialfall}
 Spezielle Datei:
 \begin{lstlisting}
 5 5
