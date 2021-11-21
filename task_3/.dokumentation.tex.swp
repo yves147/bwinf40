@@ -88,8 +88,8 @@ Sie alle in die verfügbaren Zellen des Rätsels passen. Der Ansatz geht nach fo
 \begin{enumerate}
 	\item Sortiere die Wörter nach Länge, sodass die längsten Wörter am Anfang sind.
 	\item Für jedes Wort: Suche einen zufälligen Punkt $(x, y)$ aus, der noch nicht von anderen Buchstaben besetzt ist.
-	\item Schaue, ob von diesen in eine zufällige Richtung das Wort eingesetzt werden kann (heißt alle Felder müssen also entweder frei sein oder denselben Buchstaben beinhalten, der dort eingesetzt werden müsste).
-	\item Falls ja, setze es ein. Sonst, versuche es erneut.
+	\item Schaue, ob von diesen ausgehend in eine zufällige Richtung das Wort eingesetzt werden kann (Alle Felder müssen entweder frei sein oder denselben Buchstaben beinhalten, der dort eingesetzt werden muss).
+	\item Falls ja, setze es ein. Sonst, versuche es mit Schritt 2.
 \end{enumerate}
 Die oberen Punkte können jedoch nicht immer zu einer Lösung führen, da gewisse Kombinationen an schon
 gesetzten Wörtern keine Möglichkeiten mehr bieten, die Restlichen korrekt einzusetzen.
