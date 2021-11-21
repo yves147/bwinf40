@@ -143,6 +143,5 @@ int main()
             int idx = path[day - 1];
             std::cout << idx << "\t" << hotels[idx].first << "\t\t" << hotels[idx].second << "\t" << min_ratings[idx][day] << std::endl;
         }
-        std::cout << std::endl;
     }
 }
