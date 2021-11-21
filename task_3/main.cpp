@@ -10,6 +10,7 @@ using namespace std;
 int SCHWIERIGKEIT = 0;
 bool fehler = false;
 
+// Funktion zur zufälligen Selektierung aus einen Vektor
 template<typename S>
 auto select_random(const S& s, size_t n)
 {
@@ -18,6 +19,7 @@ auto select_random(const S& s, size_t n)
     return it;
 }
 
+// Funktion zum Vergleichen von zwei wstring
 struct compare_length {
     bool operator()(const std::wstring& l, const std::wstring& r) const
     {
@@ -47,13 +49,18 @@ enum richtung {
     HOCH_RECHTS
 };
 
+// Ein Punkt auf den Feld
 struct point {
+    // i = Y-Koordinate
+    // k = X-Koordinate
     int i, k;
 };
 
 wchar_t                       STANDARD = ' ';
 wstring                       woerter[100];
+// Verfügbare Punkte
 unordered_set<pair<int, int>> verfuegbar;
+// Versuche, die benötigt wurden
 int                           versuche = 0;
 
 // Ausgabe des 2D-Vektors
@@ -73,7 +80,6 @@ void ausgabe(const vector<vector<wchar_t>>& feld)
             }
         }
     }
-    std::wcout << (versuche - 100) << " Versuche";
 }
 
 // Abhängig von der Schwierigkeit gibt diese Funktion einen zufälligen
@@ -155,6 +161,8 @@ void loeschen(vector<vector<wchar_t>>& feld)
     }
 }
 
+// Diese Methode überprüft, ob ein Wort in eine Richtung, von einen gegebenen Startpunkt
+// aus, eingesetzt werden kann.
 bool kannEinsetzen(vector<vector<wchar_t>>& feld, const wchar_t* wort, point start, richtung d)
 {
     int   i = 0, l = (int)std::char_traits<wchar_t>::length(wort);
@@ -196,6 +204,8 @@ void wortEinsetzen(vector<vector<wchar_t>>& feld, const wchar_t* wort)
         ++versuche;
         pair<int, int> n;
         if(laenge == feld[0].size()) {
+            // Fügt alle Punkte, die ganz links im Feld sind, in einen
+            // eigenen Vektor hinzu
             vector<pair<int, int>> t;
             for(int hi = 0; hi < feld[0].size(); ++hi) {
                 pair<int, int> j   = std::make_pair<int, int>((int)hi, 0);
@@ -204,11 +214,14 @@ void wortEinsetzen(vector<vector<wchar_t>>& feld, const wchar_t* wort)
                     t.push_back(*sit);
                 }
             }
+            // zufälliger Punkt aus denen, die ganz links im Feld sind
             auto r = rand() % t.size();
             n      = *select_random(t, r);
             rt      = richtung::RECHTS;
         }
         else if (laenge > feld[0].size() && laenge > feld.size()) {
+            // Fügt alle Punkte, die ganz oben im Feld sind, in einen
+            // eigenen Vektor hinzu
             vector<pair<int, int>> t;
             for(int hi = 0; hi < feld.size(); ++hi) {
                 pair<int, int> j   = std::make_pair<int, int>(0, (int)hi);
@@ -217,13 +230,17 @@ void wortEinsetzen(vector<vector<wchar_t>>& feld, const wchar_t* wort)
                     t.push_back(*sit);
                 }
             }
+            // zufälliger Punkt aus denen, die ganz oben im Feld sind
             auto r = rand() % t.size();
             n      = *select_random(t, r);
             rt      = richtung::RUNTER;
         }
         else {
+            // Falls es sich um ein Wort mit normaler Länge handelt
+            // wird ein zufälliger Punkt aus den verfügbaren ausgewählt
             auto r = rand() % verfuegbar.size();
             n      = *select_random(verfuegbar, r);
+            // Je nach Schwierigkeit sind verschiedene zufällige Richtungen möglich
             switch(SCHWIERIGKEIT) {
             case 0:
                 rt = richtung(rand() % 3);
@@ -237,11 +254,18 @@ void wortEinsetzen(vector<vector<wchar_t>>& feld, const wchar_t* wort)
         }
         start.i = n.first;
         start.k = n.second;
+    // falls diese Kombination nicht möglich ist,
+    // finde einen neuen Startpunkt
     } while(!kannEinsetzen(feld, wort, start, rt));
+
+    // Wenn das Wort eingesetzt werden kann,
+    // setze es ein
     int   i  = 0;
     point np = start;
     while(i < laenge) {
         verfuegbar.erase(make_pair(np.i, np.k));
+        // Falls das Rätsel schwer sein soll,
+        // setze jeweils 50% Groß- und Kleinbuchstaben ein
         if(SCHWIERIGKEIT == 2) {
             if(rand() % 2 == 0) {
                 feld[np.i][np.k] = (wchar_t)towupper(wort[i]);
@@ -258,6 +282,7 @@ void wortEinsetzen(vector<vector<wchar_t>>& feld, const wchar_t* wort)
     }
 }
 
+// Eingabe
 vector<vector<wchar_t>> eingabe()
 {
     vector<vector<wchar_t>> tdv;
@@ -280,10 +305,11 @@ vector<vector<wchar_t>> eingabe()
     return tdv;
 }
 
+// Diese Methode generiert neue Teilwörter, die zu dem woerter-Array hinzugefügt
+// werden 
 void extraWoerter(int groesse)
 {
     for(int i = 0; i < 10; ++i) {
-        std::cout << groesse;
         int     rindex           = rand() % groesse;
         wstring wordOriginal     = woerter[rindex];
         wstring wordDanach       = wordOriginal.substr(0, std::min(5 + rand() % 3, (int)wordOriginal.size() - 1));
@@ -291,15 +317,20 @@ void extraWoerter(int groesse)
     }
 }
 
+// Diese Methode versucht alle Wörter zu einen Feld hinzuzufügen
+// und ruft dafür die oben beschriebenen Methoden auf 
 void kombinationFinden(vector<vector<wchar_t>>& feld)
 {
     int groesse = (int)(sizeof(woerter) / sizeof(woerter[0]));
+    // Nach der Einlese, generiere ggf. Extra-Wörter
     if(SCHWIERIGKEIT == 2) {
         extraWoerter(groesse);
     }
+    // Für jedes Wort: Versuche es in das Feld hinzuzufügen.
     for(int i = 0; i < groesse; i++) {
         wstring wort = woerter[i];
         try {
+            // Wenn ein Wort zu groß ist, zeige einen Fehler
             if(wort.size() > feld.size() && wort.size() > feld[0].size()) {
                 fehler = true;
                 throw "Keine Loesung";
@@ -315,7 +346,9 @@ void kombinationFinden(vector<vector<wchar_t>>& feld)
 
 int main(int argc, char* argv[])
 {
+    // Seed für rand()-Aufruf
     srand(time(NULL));
+    // Parameter
     int s;
     if(argc < 2) {
         std::wcout << L"Bitte geben Sie einen Parameter fuer die Schwierigkeit an (0 = leicht, 1 = mittel, 2 = schwer)" << std::endl;
@@ -331,14 +364,20 @@ int main(int argc, char* argv[])
     else {
         SCHWIERIGKEIT = s;
     }
+    // Methoden werden hintereinander aufgerufen
     auto feld = eingabe();
+    // Wörter werden sortiert
     std::sort(std::begin(woerter), std::end(woerter), compare_length());
+    // Feld wird geleert
     loeschen(feld);
+    // Wörter werden zum Feld hinzugefügt
     kombinationFinden(feld);
     if(fehler == true){
         return 0;
     };
+    // Restliche Punkte werden befüllt
     fuellen(feld);
+    // Ausgabe
     ausgabe(feld);
     return 0;
 }
