@@ -77,9 +77,9 @@
 \subsection{Schwierigkeiten}
 Das Programm kann Lösungen in drei Schwierigkeiten generieren.
 Für den Menschen ist es am einfachsten in Richtung links-nach-rechts und oben-nach-unten zu lesen.
-Daher generiert die erste Stufe lediglich Wörter in diese Richtungen in das Rätsel.\\mskip
+Daher generiert die erste Stufe lediglich Wörter in diese Richtungen in das Rätsel.
 Schwieriger wird es dann, wenn auch schräg-geschriebene Wörter möglich sind. Zudem werden in der
-zweiten Schwierigkeitsstufe Teile der Wörter in das Rätsel eingefügt, um für Verwirrung zu sorgen.\\mskip
+zweiten Schwierigkeitsstufe Teile der Wörter in das Rätsel eingefügt, um für Verwirrung zu sorgen.
 Als letzte Schwierigkeit können Wörter nun in alle Richtungen geschrieben sein. Dazu werden
 die Buchstaben auch zufällig groß und klein geschrieben. Das macht das Rätsel nochmal unübersichtlicher. 
 \subsection{Idee}
@@ -96,7 +96,7 @@ Falls keine Lösung nach mehreren Durchläufen gefunden werden kann, wird also e
 
 \section{Umsetzung und Quellcode}
 Die Idee wurde in C++ umgesetzt. Aufgrund einer Inkompalibität seitens C++ kann das Programm nicht mit
-Umlauten umgehen.\\mskip
+Umlauten umgehen.
 Das Feld, in das die Wörter später eingefügt werden, wird als 2D-Array vom Typ char beschrieben.
 Nachdem die Wörter als string-Array eingelesen worden, wird im Fall das eine Lösung mit der höchsten Schwierigkeiten generiert werden soll, eine Methode namens extraWoerter aufgerufen, welche Wörterteile als neue Wörter in das Wörter-Array hinzufügt. Andernfalls wird dies übersprungen.
 

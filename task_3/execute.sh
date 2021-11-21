@@ -1,2 +1,2 @@
 #!/bin/bash
-cat word_list | ./a.out
+cat examples/worte4.txt | ./a.out
