@@ -329,6 +329,6 @@ int main(int argc, char* argv[])
         return 0;
     };
     fuellen(feld);
-    //ausgabe(feld);
+    ausgabe(feld);
     return 0;
 }
