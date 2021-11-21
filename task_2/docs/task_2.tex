@@ -5,7 +5,7 @@
 \usepackage[a4paper,margin=2.5cm,footskip=0.5cm]{geometry}
 
 % Die nächsten vier Felder bitte anpassen:
-\newcommand{\Aufgabe}{Aufgabe 1: Schiebeparkplatz} % Aufgabennummer und Aufgabennamen angeben
+\newcommand{\Aufgabe}{Aufgabe 2: Vollgeladen} % Aufgabennummer und Aufgabennamen angeben
 \newcommand{\TeamId}{00067}                       % Team-ID aus dem PMS angeben
 \newcommand{\TeamName}{Panic! at the Kernel}                 % Team-Namen angeben
 \newcommand{\Namen}{Christopher Besch}           % Namen der Bearbeiter/-innen dieser Aufgabe angeben
@@ -77,11 +77,11 @@
 
 \section{Lösungsidee}
 % Die Idee der Lösung sollte hieraus vollkommen ersichtlich werden, ohne dass auf die eigentliche Implementierung Bezug genommen wird.
-Fuer jedes Hotel laesst sich sagen, ob es innerhalb von $d$ Tagen erreicht werden kann.
-Ist dies fuer ein $d$ der Fall, kann fuer die minimale Bewertung aller auf dem optimalen Weg zu ihm liegenden Hotels angegeben werden.
+Fuer jedes Hotel $x$ laesst sich sagen, ob es innerhalb von $d$ Tagen erreicht werden kann.
+Ist dies fuer ein $d$ der Fall, kann die minimale Bewertung aller Hotels, die auf dem optimalen Weg zu $x$ liegenden, angegeben werden.
 Dieser optimale Weg benoetigt genau $d$ Tage.
 Zudem ist er in dem Sinne optimal, dass kein anderer Weg existiert, der in $d$ Tagen das Hotel erreicht und eine besserer minimale Bewertung aufweist.
-Diese Werte koennen in einer Tabelle---der Minimumstabelle---dargestellt werden:
+Diese Werte koennen in einer Tabelle---der Minimumstabelle---dargestellt werden und werden minimale Webbewertung genannt:
 \begin{lstlisting}
                   min rating at day:
 idx     rating    0     1       2       3       4       5
@@ -108,30 +108,33 @@ Da eine Fahrt, die laenger als fuenf Tage dauert nicht zulaessig ist, werden die
 Anhand dieser Daten laesst sich recht leicht die minimale Bewertung auf dem Weg zu jedem beliebigen Hotel ausgeben.
 Interessant ist dieser Wert fuer das Ziel.
 Es muss lediglich das Minimum aller Werte in der letzten Zeile bestimmt werden.
+Die Reise endet dann am sogenannten optimalen Tag.
 
 Um nun die einzelnen Hotels, die optimal zum Ziel fuehren, zu bestimmen, wird eine zweite Tabelle---die Vorgaengertabelle---benoetigt.
-Diese weist die gleichen Dimensionen auf, gibt allerdings fuer jedes Hotel $x$ und Tag $d$ das Hotel, das am vorherigen Tag zuletzt besucht wurde, an.
+Diese weist die gleichen Dimensionen auf, gibt allerdings fuer jedes Hotel $x$ und Tag $d$ das Hotel, das am vorherigen Tag ($d-1$) zuletzt besucht wurde, an.
 So kann vom Ziel am optimalen Tag ausgehend immer das zuletzt besuchte Hotel bestimmt werden.
-Dieser Vorgang endet, wenn man am Anfang angekommen ist.
+Dieser Vorgang endet, wenn man am Startort angekommen ist.
 
 \subsection{Berechnung der Tabellen}
 Als Taglaenge wird die Strecke verstanden, die an einem Tag zurueckgelegt werden kann.
-Zu jedem Hotel $x$ kann man am Tag $d$ von allen Hotels, die maximal eine Taglaenge vor $a$ liegt und innerhalb von genau $d-1$ Tagen erreichbar sind, gelangen.
+Zu jedem Hotel $x$ kann man am Tag $d$ von allen Hotels, die maximal eine Taglaenge vor $x$ liegen und innerhalb von genau $d-1$ Tagen erreichbar sind, gelangen.
 Diese Hotels bilden die Menge $Y$.
 Alle Hotels, die hinter $x$ liegen, sind nicht zu verwenden.
-Die minimale $a$ Bewertung zum Hotel $x$ nach $d$ Tagen entspricht mit
+
+Die minimale Bewertung $a$ zum Hotel $x$ nach $d$ Tagen entspricht mit
 \begin{itemize}
-    \item dem Minimum $b$ der Werte aus der Minimumstabelle fuer aller Hotels aus $Y$ und den Tag $d-1$ und
-    \item der Bewertung des Hotels $x$:
+    \item dem Minimum $b$ der minimalen Wegbewertungen zu allen Hotels aus $Y$ fuer den Tag $d-1$ und
+    \item der Bewertung $c$ des Hotels $x$:
 \end{itemize}
 \begin{equation*}
-    a = b + c
+    a = min(b, c)
 \end{equation*}
 $a$ wird in der Minimumstabelle gespeichert.
-Der entsprechende Wert in der Vorgaengertabelle entspricht dem Index des Hotels dessen
+Der entsprechende Wert in der Vorgaengertabelle entspricht dem Index des Hotels dessen minimale Wegbewertung gewaehlt wurde.
 
+\medskip
 Da so immer nur die Information von Hotels, die vor dem aktuellen liegen, benoetigt werden, kann das Prinzip der dynamischen Programmierung verwendet werden.
-Hierbei werden die Tabellen anfangend beim \glqq{}Start\grqq{} Hotel fuer Hotel gefuellt.
+Hierbei werden die Tabellen anfangend beim Startort Hotel fuer Hotel gefuellt.
 Jedes weitere Hotel benoetigt ausschliesslich die bereits berechnete Information.
 
 \section{Umsetzung und Quellcode}
@@ -145,7 +148,7 @@ std::vector<std::vector<float>> min_ratings(n + 2, std::vector<float>(DAYS + 1, 
 std::vector<std::vector<int>>   last_hotel(n + 2, std::vector<int>(DAYS + 1, -1));
 \end{lstlisting}
 \lstinline{DAYS} entspricht der Anzahl an Tagen, die die Reise maximal dauern darf.
-Diese Konstante wird an allen relevanten Stellen respektiert, weshalb leicht eine Berechnung fuer mehr (oder weniger) als fuenf Tagen durchgefuehrt werden kann.
+Diese Konstante wird an allen relevanten Stellen respektiert, weshalb leicht eine Berechnung fuer mehr (oder weniger) als fuenf Tage durchgefuehrt werden kann.
 
 Nun kann mit der Funktion \lstinline{populate_tables} diese Tabellen der Loesungsidee nach fuellen.
 \begin{lstlisting}[language=C++]
@@ -159,7 +162,7 @@ void populate_tables(
     // go through all but "first" hotels
     for(auto cur = hotels.begin() + 1; cur != hotels.end(); ++cur) {
         int cur_idx = cur - hotels.begin();
-        // first hotel `cur` can be reached from
+        // first hotel, `cur` can be reached from
         auto prev = std::lower_bound(hotels.begin(), hotels.end(),
                                      std::make_pair(cur->first - DAY_LEN, .0f));
         for(; prev != cur; ++prev) {
@@ -181,8 +184,13 @@ void populate_tables(
     }
 }
 \end{lstlisting}
+Diese Funktion ist die aufwaendigste der Implementation.
+Obwohl sie drei verschachtelte Schleifen enthaelt ist die Laufzeit der gesamten Implementation fuer fuenf Tage linear, wenn davon ausgegangen wird, dass der Abstand zwischen zwei Hotels in etwa immer gleich ist.
+Durch diese Annahme benoetigen die inneren Schleifen unabhaengig von der Anzahl an Hotels immer gleich lange.
+Es bleibt nur die aeussere.
 
-Wenn die Tabellen produziert wurde, koennen mit \lstinline{get_best_day} die Wert des \glqq{}Zielhotel\grqq{} in der Minimumstabelle linear nach dem Optimum durchsucht werden:
+Wenn die Tabellen produziert wurde, koennen mit \lstinline{get_best_day} die Werte des \glqq{}Zielhotels\grqq{} in der Minimumstabelle linear nach dem Optimum durchsucht werden.
+Wenn es nicht moeglich ist, unter den gegebenen Anforderungen das Ziel zu erreichen, wird $-1$ zurueckgegeben.
 \begin{lstlisting}[language=C++]
 int get_best_day(const std::vector<std::vector<float>>& min_ratings, int n)
 {
@@ -215,12 +223,17 @@ void construct_path(
 }
 \end{lstlisting}
 Hierbei wird \lstinline{cur_idx} immer so aktualisiert, dass immer das jeweilig vorhergehende Hotel referenziert wird.
+Die Suche wird beendet, wenn der Startort erreicht wurde.
 
 Zum Schluss werden die beiden Tabellen und der finale, optimale Weg ausgegeben.
 
 \section{Beispiele}
 % Genügend Beispiele einbinden! Die Beispiele von der BwInf-Webseite sollten hier diskutiert werden, aber auch eigene Beispiele sind sehr gut – besonders wenn sie Spezialfälle abdecken. Aber bitte nicht 30 Seiten Programmausgabe hier einfügen!
 Das Pythonscript \lstinline{tabs.py} wird benutzt, um tabs korrekt zu formatieren.
+Da es fuer die Loesung der Aufgabe nicht von Noeten ist, ist es in der Abgabe nicht enthalten.
+Es kann \href{https://gist.github.com/christopher-besch/d88a059a621e3e4a26983b3db576e48d}{hier} heruntergeladen werden.
+
+Neben dem optimalen Weg wird ebenfalls die Minimumstabelle abgedruckt.
 Die \lstinline{+} Zeichen zeigen, dass dieses Hotel im optimalen Weg enthalten ist.
 
 \subsection*{Hotels 1}
