@@ -6,13 +6,15 @@
 #include <stdlib.h>
 #include <string>
 #include <unordered_set>
+#include <vector>
 
 using namespace std;
 
-const int HOEHE  = 42;
-const int BREITE = 30;
+int HOEHE   = 42;
+int BREITE  = 30;
+int WANZAHL = 100;
 
-const int DIFFICULTY = 2;
+int SCHWIERIGKEIT = 2;
 
 template<typename S>
 auto select_random(const S& s, size_t n)
@@ -48,7 +50,7 @@ struct point {
     int i, k;
 };
 
-wchar_t                       grid[HOEHE][BREITE];
+vector<vector<wchar_t>>       grid;
 wchar_t                       STANDARD = ' ';
 wstring                       woerter[100];
 unordered_set<pair<int, int>> avbl;
@@ -56,12 +58,12 @@ int                           versuche = 0;
 
 void ausgabe()
 {
-    for(int i = 0; i < HOEHE; i++) {
-        for(int k = 0; k < BREITE; k++) {
+    for(int i = 0; i < grid.size(); i++) {
+        for(int k = 0; k < grid[i].size(); k++) {
             if(k == 0) {
                 std::wcout << "\t" << grid[i][k] << " ";
             }
-            else if(k == BREITE - 1) {
+            else if(k == grid[i].size() - 1) {
                 std::wcout << grid[i][k] << std::endl;
             }
             else {
@@ -74,7 +76,7 @@ void ausgabe()
 
 wchar_t zufallsCharakter()
 {
-    if(DIFFICULTY < 2) {
+    if(SCHWIERIGKEIT < 2) {
         return 'A' + rand() % 26;
     }
     else {
@@ -137,23 +139,24 @@ point punktBewegen(point start, richtung d)
     return np;
 }
 
-void loeschen()
+void loeschen(vector<vector<wchar_t>> &feld)
 {
-    for(int i = 0; i < HOEHE; i++) {
-        for(int k = 0; k < BREITE; k++) {
-            grid[i][k] = STANDARD;
+    for(int i = 0; i < feld.size(); i++) {
+        for(int k = 0; k < feld[i].size(); k++) {
+            feld[i][k] = STANDARD;
             avbl.insert(make_pair(i, k));
         }
     }
+    std::wcout << "avbl " << avbl.size() << std::endl;
 }
 
-bool kannEinsetzen(const wchar_t* word, point start, richtung d)
+bool kannEinsetzen(vector<vector<wchar_t>>& feld, const wchar_t* wort, point start, richtung d)
 {
     int   i  = 0;
     point np = start;
-    while(i < (int)std::char_traits<wchar_t>::length(word)) {
+    while(i < (int)std::char_traits<wchar_t>::length(wort)) {
         try {
-            if(grid[np.i][np.k] == STANDARD) {
+            if(feld[np.i][np.k] == STANDARD) {
                 np = punktBewegen(np, d);
                 i++;
             }
@@ -168,19 +171,19 @@ bool kannEinsetzen(const wchar_t* word, point start, richtung d)
     return true;
 }
 
-void fuellen()
+void fuellen(vector<vector<wchar_t>>& feld)
 {
     ausgabe(); // nur zum testen
-    for(int i = 0; i < HOEHE; i++) {
-        for(int k = 0; k < BREITE; k++) {
-            if(grid[i][k] == STANDARD) {
-                grid[i][k] = zufallsCharakter();
+    for(int i = 0; i < feld.size(); i++) {
+        for(int k = 0; k < feld[i].size(); k++) {
+            if(feld[i][k] == STANDARD) {
+                feld[i][k] = zufallsCharakter();
             }
         }
     }
 }
 
-void wortEinsetzen(const wchar_t* word)
+void wortEinsetzen(vector<vector<wchar_t>>& feld, const wchar_t* wort)
 {
     point    start;
     richtung d;
@@ -190,7 +193,7 @@ void wortEinsetzen(const wchar_t* word)
         auto n  = *select_random(avbl, r);
         start.i = n.first;
         start.k = n.second;
-        switch(DIFFICULTY) {
+        switch(SCHWIERIGKEIT) {
         case 0:
             d = richtung(rand() % 3);
             break;
@@ -200,21 +203,22 @@ void wortEinsetzen(const wchar_t* word)
         case 2:
             d = richtung(rand() % 9);
         }
-    } while(!kannEinsetzen(word, start, d));
+        std::wcout << L"h  " << wort << std::endl;
+    } while(!kannEinsetzen(feld, wort, start, d));
 
     int   i  = 0;
     point np = start;
-    while(i < (int)std::char_traits<wchar_t>::length(word)) {
+    while(i < (int)std::char_traits<wchar_t>::length(wort)) {
         avbl.erase(make_pair(np.i, np.k));
-        grid[np.i][np.k] = (wchar_t)towupper(word[i]);
+        feld[np.i][np.k] = (wchar_t)towupper(wort[i]);
         np               = punktBewegen(np, d);
         i++;
     }
 }
 
-void dateiAufruf(char* datei)
+vector<vector<wchar_t>> dateiAufruf(char* datei)
 {
-    wifstream woerterDatei(datei);
+    /*wifstream woerterDatei(datei);
     wstring   wort;
     int       zeile = 0;
     if(woerterDatei.is_open()) {
@@ -226,7 +230,28 @@ void dateiAufruf(char* datei)
                 throw "length/gridsize";
             }
         }
+    }*/
+    vector<vector<wchar_t>> tdv;
+    std::wcin >> HOEHE >> BREITE;
+    for(int h = 0; h < HOEHE; ++h) {
+        vector<wchar_t> t;
+        for(int b = 0; b < BREITE; ++b) {
+            t.push_back(STANDARD);
+        }
+        std::wcout << t.size() << std::endl;
+        tdv.push_back(t);
     }
+    std::wcout << grid.size() << std::endl;
+    std::wcin >> WANZAHL;
+
+    int i = 0;
+    while(i < WANZAHL) {
+        std::wcin >> woerter[i];
+        std::wcout << woerter[i] << std::endl;
+        ++i;
+    }
+
+    return tdv;
 }
 
 void extraWoerter(int groesse)
@@ -235,21 +260,21 @@ void extraWoerter(int groesse)
         std::cout << groesse;
         int     rindex           = rand() % groesse;
         wstring wordOriginal     = woerter[rindex];
-        wstring wordDanach       = wordOriginal.substr(0, std::min(2 + rand() % 3, (int)wordOriginal.size() - 1));
+        wstring wordDanach       = wordOriginal.substr(0, std::min(3 + rand() % 3, (int)wordOriginal.size() - 1));
         woerter[groesse - i - 1] = wordDanach;
     }
 }
 
-void dateiAuslesen()
+void kombinationFinden(vector<vector<wchar_t>> &feld)
 {
     int groesse = (int)(sizeof(woerter) / sizeof(woerter[0]));
-    if(DIFFICULTY == 2) {
+    if(SCHWIERIGKEIT == 2) {
         extraWoerter(groesse);
-    };
+    }
     for(int i = 0; i < groesse; i++) {
-        wstring word = woerter[i];
+        wstring wort = woerter[i];
         try {
-            wortEinsetzen(word.c_str());
+            wortEinsetzen(feld, wort.c_str());
         }
         catch(const char*& e) {
             versuche = 0;
@@ -261,17 +286,15 @@ void dateiAuslesen()
 int main(int argc, char* argv[])
 {
     srand(time(NULL));
-
-    try {
-        dateiAufruf(argv[1]);
-    }
-    catch(const char* msg) {
-        cout << msg << endl;
-        exit(1);
-    }
-    loeschen();
-    dateiAuslesen();
-    fuellen();
+    std::wcout << 0 << std::endl;
+    vector<vector<wchar_t>> v = dateiAufruf(argv[1]);
+    std::wcout << 1 << std::endl;
+    loeschen(v);
+    std::wcout << 2 << std::endl;
+    kombinationFinden(v);
+    std::wcout << 3 << std::endl;
+    fuellen(v);
+    std::wcout << 4 << std::endl;
     ausgabe();
     return 0;
 }
