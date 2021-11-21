@@ -5,7 +5,7 @@
 
 #define inf std::numeric_limits<float>::max() / 2
 
-constexpr int DAYS    = 6;
+constexpr int DAYS    = 5;
 constexpr int DAY_LEN = 6 * 60;
 
 void populate_tables(
