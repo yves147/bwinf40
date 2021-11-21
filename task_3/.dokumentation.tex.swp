@@ -95,10 +95,16 @@ Die oberen Punkte können jedoch nicht immer zu einer Lösung führen, da gewiss
 gesetzten Wörtern keine Möglichkeiten mehr bieten, die Restlichen korrekt einzusetzen.
 Falls keine Lösung nach mehreren Durchläufen gefunden werden kann, wird also ein neuer Versuch gestartet.
 
-Zudem ist noch ein Spezialfall zu berücksichtigen, der durch die obere Vorgehensweise nicht ausreichend abgedeckt wird. Wenn man ein Wort hat, dass genauso lang ist, wie das Feld breit bzw. hoch ist, wird bei der Generierung des Startpunktes $(x,y)$ berücksichtigt, dass er nur am Rand existieren kann und das Wort nur in gewisse Richtungen sicher verlaufen kann, ohne die anderen Worte zu beeinflussen.
+Zudem ist noch ein Spezialfall zu berücksichtigen, der durch die obere Vorgehensweise nicht ausreichend 
+abgedeckt wird. Wenn man ein Wort hat, dass genauso lang ist, wie das Feld breit bzw. hoch ist, wird bei der 
+Generierung des Startpunktes $(x,y)$ berücksichtigt, dass er nur am Rand existieren kann und das Wort nur in 
+gewisse Richtungen sicher verlaufen kann, ohne die anderen Worte zu beeinflussen.
 
 \section{Umsetzung und Quellcode}
-Die Lösungsidee wurde in C++ umgesetzt. Da C++ keine plattformübergreifende Implementation von Umlauten hat, kann das Programm nicht mit diesen umgehen. Die Richtungen sind als Enum im Programm dargestellt. Ein einzelner Punkt in den Feld nxm, dessen Größe durch die Eingabe vorgegeben wird, ist durch die Structure point beschrieben. Das Attribut $i$ steht hierbei für die Y-Koordinate und $k$ für die X-Koordinate.
+Die Lösungsidee wurde in C++ umgesetzt. Da C++ keine plattformübergreifende Implementation von Umlauten hat, 
+kann das Programm nicht mit diesen umgehen. Die Richtungen sind als Enum im Programm dargestellt. Ein 
+einzelner Punkt in den Feld nxm, dessen Größe durch die Eingabe vorgegeben wird, ist durch die Structure point 
+beschrieben. Das Attribut $i$ steht hierbei für die Y-Koordinate und $k$ für die X-Koordinate.
 
 \begin{lstlisting}[language=C++]
 enum richtung {
@@ -117,7 +123,10 @@ struct point {
 };
 \end{lstlisting}
 
-Das Feld, in das die Wörter später eingefügt werden, wird als 2D-Vektor vom Typ \lstinline{wchar_t} beschrieben. Nachdem die Wörter als string-Array eingelesen worden wird im Fall das eine Lösung mit der höchsten Schwierigkeiten generiert werden soll, eine Methode namens \lstinline{extraWoerter} aufgerufen, welche Wörterteile als neue Wörter in das Wörter-Array hinzufügt. Andernfalls wird dies übersprungen.
+Das Feld, in das die Wörter später eingefügt werden, wird als 2D-Vektor vom Typ \lstinline{wchar_t} 
+beschrieben. Nachdem die Wörter als string-Array eingelesen worden wird im Fall das eine Lösung mit der 
+höchsten Schwierigkeiten generiert werden soll, eine Methode namens \lstinline{extraWoerter} aufgerufen, 
+welche Wörterteile als neue Wörter in das Wörter-Array hinzufügt. Andernfalls wird dies übersprungen.
 
 \begin{lstlisting}[language=C++]
 void extraWoerter(int groesse)
@@ -132,10 +141,12 @@ void extraWoerter(int groesse)
 }
 \end{lstlisting}
 
-Als Nächstes wird für jedes Wort die Funktion \lstinline{wortEinsetzen} aufgerufen, welche versucht, das Wort in die v
-erbleibenden Felder einzubetten. Hier wird wie bereits beschrieben erstmal ein zufälliger Punkt ausgesucht und eine zufällige Richtung bestimmt, jedoch abhängig von der Schwierigkeit, 
+Als Nächstes wird für jedes Wort die Funktion \lstinline{wortEinsetzen} aufgerufen, welche versucht, das Wort 
+in die verbleibenden Felder einzubetten. Hier wird wie bereits beschrieben erstmal ein zufälliger Punkt 
+ausgesucht und eine zufällige Richtung bestimmt, jedoch abhängig von der Schwierigkeit, 
 was hier als switch-case implementiert wurde.
-Die möglichen Punkte werden als \lstinline{unordered_set} von Koordinaten dargestellt (Im folgenden Code-Ausschnitt die Variable \lstinline{verfuegbar}). 
+Die möglichen Punkte werden als \lstinline{unordered_set} von Koordinaten dargestellt (Im folgenden Code-
+Ausschnitt die Variable \lstinline{verfuegbar}). 
 
 \begin{lstlisting}[language=C++]
 auto rt     = rand() % verfuegbar.size();
@@ -207,7 +218,8 @@ while(i < laenge) {
 \end{lstlisting}
 %Wie oben beschrieben, wird, für den Fall, dass eine gewisse Kombination an besetzten Feldern keine Lösung mehr bietet - also das Einsetzen eines speziellen Wortes bei vielen Versuchen nicht ermöglicht, der vorherige Fortschritt (damit sind die schon eingesetzten Worte gemeint) gelöscht und somit aus dem 2D-Array entfernt.
 
-Zu dem Zeitpunkt, an dem das Programm eine passende Lösung zur Zusammensetzung gefunden hat, sind also auch schon die zuvor durch \lstinline{extraWoerter} generierten Wortteile in der Zwischenlösung enthalten.
+Zu dem Zeitpunkt, an dem das Programm eine passende Lösung zur Zusammensetzung gefunden hat, sind also auch
+schon die zuvor durch \lstinline{extraWoerter} generierten Wortteile in der Zwischenlösung enthalten.
 Jetzt füllt die Methode \lstinline{fuellen} die restlichen Felder mit zufälligen Buchstaben. 
 Auf höchster Schwierigkeit werden hier auch die Buchstaben zufällig groß- oder kleingeschrieben befüllt.
 Hierfür wird für jedes Feld, dass noch dem Standard-Charakter entspricht, die Methode \lstinline{zufallsCharakter} aufgerufen.
