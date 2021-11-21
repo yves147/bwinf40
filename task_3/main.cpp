@@ -50,24 +50,23 @@ struct point {
     int i, k;
 };
 
-vector<vector<wchar_t>>       grid;
 wchar_t                       STANDARD = ' ';
 wstring                       woerter[100];
 unordered_set<pair<int, int>> avbl;
 int                           versuche = 0;
 
-void ausgabe()
+void ausgabe(const vector<vector<wchar_t>>& feld)
 {
-    for(int i = 0; i < grid.size(); i++) {
-        for(int k = 0; k < grid[i].size(); k++) {
+    for(int i = 0; i < feld.size(); i++) {
+        for(int k = 0; k < feld[i].size(); k++) {
             if(k == 0) {
-                std::wcout << "\t" << grid[i][k] << " ";
+                std::wcout << "\t" << feld[i][k] << " ";
             }
-            else if(k == grid[i].size() - 1) {
-                std::wcout << grid[i][k] << std::endl;
+            else if(k == feld[i].size() - 1) {
+                std::wcout << feld[i][k] << std::endl;
             }
             else {
-                std::wcout << grid[i][k] << " ";
+                std::wcout << feld[i][k] << " ";
             }
         }
     }
@@ -158,8 +157,8 @@ bool kannEinsetzen(vector<vector<wchar_t>>& feld, const wchar_t* wort, point sta
         //try {
         if(feld[np.i][np.k] == STANDARD) {
             np = punktBewegen(np, d);
-            std::wcout << np.i << L"-" << feld.size() << std::endl;
-            std::wcout << np.k << L"-" << feld[0].size() << std::endl;
+            // std::wcout << np.i << L"-" << feld.size() << std::endl;
+            // std::wcout << np.k << L"-" << feld[0].size() << std::endl;
             if(np.i < 0 || np.i >= feld.size() || np.k < 0 || np.k >= feld[0].size()) {
                 return false;
             }
@@ -178,7 +177,7 @@ bool kannEinsetzen(vector<vector<wchar_t>>& feld, const wchar_t* wort, point sta
 
 void fuellen(vector<vector<wchar_t>>& feld)
 {
-    ausgabe(); // nur zum testen
+    ausgabe(feld); // nur zum testen
     for(int i = 0; i < feld.size(); i++) {
         for(int k = 0; k < feld[i].size(); k++) {
             if(feld[i][k] == STANDARD) {
@@ -292,14 +291,14 @@ int main(int argc, char* argv[])
 {
     srand(time(NULL));
     std::wcout << 0 << std::endl;
-    vector<vector<wchar_t>> v = dateiAufruf(argv[1]);
+    vector<vector<wchar_t>> feld = dateiAufruf(argv[1]);
     std::wcout << 1 << std::endl;
-    loeschen(v);
+    loeschen(feld);
     std::wcout << 2 << std::endl;
-    kombinationFinden(v);
+    kombinationFinden(feld);
     std::wcout << 3 << std::endl;
-    fuellen(v);
+    fuellen(feld);
     std::wcout << 4 << std::endl;
-    ausgabe();
+    ausgabe(feld);
     return 0;
 }
