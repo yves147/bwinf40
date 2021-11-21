@@ -167,6 +167,42 @@ case 2:
 
 Im Fall, das ein Wort das ganze Feld ausfüllt, begrenzt das Programm die Möglichkeiten dieses Wortes, in das Feld eingesetzt zu werden.
 
+\begin{lstlisting}[language=C++]
+pair<int, int> n;
+if(laenge == feld[0].size()) {
+	// Fuegt alle Punkte, die ganz links im Feld sind, in einen
+	// eigenen Vektor hinzu
+	vector<pair<int, int>> t;
+	for(int hi = 0; hi < feld[0].size(); ++hi) {
+	pair<int, int> j   = std::make_pair<int, int>((int)hi, 0);
+	auto           sit = verfuegbar.find(j);
+	if(sit != verfuegbar.end()) {
+	t.push_back(*sit);
+	}
+	}
+	// zufaellger Punkt aus denen, die ganz links im Feld sind
+	auto r = rand() % t.size();
+	n      = *select_random(t, r);
+	rt      = richtung::RECHTS;
+}
+else if (laenge > feld[0].size() && laenge > feld.size()) {
+	// Fuegt alle Punkte, die ganz oben im Feld sind, in einen
+	// eigenen Vektor hinzu
+	vector<pair<int, int>> t;
+	for(int hi = 0; hi < feld.size(); ++hi) {
+	pair<int, int> j   = std::make_pair<int, int>(0, (int)hi);
+	auto           sit = verfuegbar.find(j);
+	if(sit != verfuegbar.end()) {
+	t.push_back(*sit);
+	}
+	}
+	// zufaelliger Punkt aus denen, die ganz oben im Feld sind
+	auto r = rand() % t.size();
+	n      = *select_random(t, r);
+	rt      = richtung::RUNTER;
+}
+\end{lstlisting}
+
 Nachdem also ein zufälliger verfügbarer Punkt ausgesucht wurde, ist zu überprüfen, ob dort das jeweilige Wort 
 eingesetzt werden kann. Das passiert, indem jeweils für das Wort abhängig von einer Richtung und einen 
 Startpunkt, eine Methode \lstinline{kannEinsetzen} aufgerufen wird.
